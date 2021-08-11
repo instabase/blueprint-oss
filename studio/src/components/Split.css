@@ -1,0 +1,50 @@
+.Split {
+  min-width: 0;
+  min-height: 0;
+
+  display: grid;
+  position: relative;
+
+  --grabbable-size: 16px;
+  --grabbable-offset: calc(var(--grabbable-size) * -0.5);
+}
+
+.Split > * {
+  min-width: 0;
+  min-height: 0;
+}
+
+.Split._horizontal {
+  grid-template-columns: 1fr;
+  grid-auto-flow: column;
+}
+
+.Split._vertical {
+  grid-template-rows: 1fr;
+  grid-auto-flow: row;
+}
+
+.Split > ._dragbar {
+  overflow: visible;
+  background: var(--default-grid-line-color);
+  position: relative;
+  z-index: 3;
+}
+
+.Split._vertical > ._dragbar > ._grabbable {
+  cursor: ew-resize;
+  position: absolute;
+  left: var(--grabbable-offset);
+  top: 0;
+  width: var(--grabbable-size);
+  height: 100%;
+}
+
+.Split._horizontal > ._dragbar > ._grabbable {
+  cursor: ns-resize;
+  position: absolute;
+  left: 0;
+  top: var(--grabbable-offset);
+  width: 100%;
+  height: var(--grabbable-size);
+}

@@ -1,0 +1,31 @@
+.MenuBar {
+  padding-left: var(--medium-gutter);
+  padding-right: var(--medium-gutter);
+
+  font-size: var(--slightly-small-font-size);
+
+  background: var(--slightly-dark-canvas-color);
+
+  display: flex;
+  flex-direction: row;
+
+  overflow: visible;
+
+  position: relative;
+
+  border-bottom: var(--default-border-width) solid var(--default-border-color);
+}
+
+.MenuBar > :not(:first-child) {
+  margin-left: var(--default-border-width);
+}
+
+.MenuBar > ._button {
+  user-select: none;
+  position: relative;
+  padding: var(--small-gutter) var(--large-gutter);
+}
+
+.MenuBar > ._button._open {
+  background: var(--slightly-light-canvas-color);
+}

@@ -1,0 +1,16 @@
+.StatusBar {
+  padding-left: var(--medium-gutter);
+  padding-right: var(--medium-gutter);
+  font-size: var(--slightly-small-font-size);
+  background: var(--dark-canvas-color);
+  display: flex;
+  flex-direction: row;
+  overflow: visible;
+  position: relative;
+  border-top: var(--default-border-width) solid var(--default-border-color);
+}
+
+/* .StatusBar > :not(:first-child) { */
+.StatusBar > :first-child {
+  margin-left: var(--default-border-width);
+}

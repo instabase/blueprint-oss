@@ -1,0 +1,21 @@
+.Dialog {
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+
+  background: var(--canvas-color);
+  border: var(--default-border-width) solid var(--default-border-color);
+  border-radius: var(--large-border-radius);
+
+  box-shadow: 0px 0px 10px 5px var(--dark-canvas-color);
+}
+
+.Dialog > ._contents {
+  display: grid;
+  grid-auto-rows: min-content;
+  margin: var(--huge-gutter);
+  grid-gap: var(--medium-gutter);
+
+  min-height: 0;
+}

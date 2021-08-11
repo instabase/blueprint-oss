@@ -1,0 +1,5 @@
+.ImagePane_ExtractedValueView {
+  background: rgba(var(--extracted-value-view-color),
+                   var(--light-entity-view-opacity));
+  outline: none;
+}

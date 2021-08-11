@@ -1,0 +1,14 @@
+# Generic
+--ignore-dir=output
+--ignore-dir=dist
+
+# Used in tests.sh
+--ignore-dir=ci_output
+
+# Dashboard default cache dir
+--ignore-dir=db_cache
+
+--ignore-dir=.mypy_cache
+--ignore-file=ext:ibocr
+--ignore-file=ext:svg
+--ignore-dir=.venv

@@ -1,0 +1,20 @@
+.CornerButtons {
+  position: absolute;
+  right: var(--medium-gutter);
+  bottom: var(--medium-gutter);
+  display: flex;
+  z-index: 10;
+}
+
+.CornerButtons > :not(:first-child) {
+  margin-left: var(--medium-gutter);
+}
+
+.CornerButtons > button {
+  display: inline-flex;
+  align-items: center;
+}
+
+.CornerButtons._high {
+  bottom: 2.2em !important;
+}

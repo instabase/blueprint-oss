@@ -1,0 +1,83 @@
+/* To use this component, make sure the parent DOM element
+   has the HiddenButtonsContainer class. */
+
+.HiddenButtonsContainer {
+  position: relative;
+  pointer-events: auto !important;
+}
+
+.HiddenButtonsContainer:not(:hover) > .HiddenButtons {
+  visibility: hidden;
+}
+
+.HiddenButtons {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(0, -50%);
+  z-index: 5;
+
+  max-width: 100%;
+  display: flex;
+}
+
+.HiddenButtons._topAligned {
+  top: var(--tiny-gutter);
+  transform: none;
+}
+
+.HiddenButtons > button:not(:first-child) {
+  margin-left: var(--tiny-gutter);
+}
+
+.HiddenButtons > button:last-child {
+  margin-right: var(--tiny-gutter);
+}
+
+/* Hidden/tiny buttons
+   =================== */
+
+.HiddenButtons > button {
+  display: inline-flex;
+  align-items: center;
+
+  font-size: var(--very-small-font-size);
+
+  padding-left: var(--small-gutter);
+  padding-right: var(--small-gutter);
+
+  user-select: none;
+  border:
+    var(--default-border-width)
+    solid
+    rgba(0, 0, 0, 0);
+  border-radius: var(--medium-border-radius);
+
+  --hidden-button-active-border: var(--default-border);
+}
+
+.HiddenButtons > button > svg {
+  width: 1em;
+  height: 1em;
+}
+
+.HiddenButtons > button:hover {
+  border: var(--hidden-button-active-border);
+}
+
+.HiddenButtons > button:active {
+  border: var(--hidden-button-active-border);
+}
+
+.TinyButton {
+  padding-left: var(--small-gutter);
+  padding-right: var(--small-gutter);
+
+  display: inline-flex;
+  align-items: center;
+}
+
+.TinyButton > svg {
+  width: 1em;
+  height: 1em;
+}

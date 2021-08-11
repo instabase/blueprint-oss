@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "es2019",
+
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+
+    "jsx": "react",
+    "strict": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "studio/*": ["./src/*"]
+    }
+  },
+  "include": [
+    "src/main.tsx"
+  ]
+}

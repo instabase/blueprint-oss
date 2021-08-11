@@ -1,0 +1,5 @@
+In addition to the packages listed in package.json,
+Studio uses open-source software from the following sources,
+having the following licenses:
+
+- Icons from Bootstrap (https://getbootstrap.com/), MIT license.

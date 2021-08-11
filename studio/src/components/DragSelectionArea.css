@@ -1,0 +1,15 @@
+.DragSelectionArea {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.DragSelectionArea._dragging {
+  pointer-events: none;
+}
+
+.DragSelectionRectangle {
+  background: rgba(var(--primary-color-integers),
+                   var(--default-entity-view-opacity));
+  outline: none;
+}

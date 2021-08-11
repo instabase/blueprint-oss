@@ -1,0 +1,9 @@
+.NodePane_FieldsTable_ModelResultsHeader {
+  display: grid;
+  grid-template-columns: 1fr min-content;
+}
+
+.NodePane_FieldsTable_ModelResultsHeader > select {
+  font-size: 55%;
+  margin-left: var(--medium-gutter);
+}

@@ -1,0 +1,11 @@
+.BBoxView._targetValueWord {
+  background: rgba(var(--target-value-view-color),
+                   var(--light-entity-view-opacity));
+  outline: none;
+}
+
+.BBoxView._targetValueWord._selected {
+  background: rgba(var(--target-value-view-color),
+                   var(--very-dark-entity-view-opacity));
+  outline: var(--selected-target-value-view-outline);
+}

@@ -1,0 +1,30 @@
+.Menu {
+  color: var(--default-color);
+  background: var(--dark-canvas-color);
+
+  display: grid;
+  grid-template-columns: min-content;
+
+  padding: var(--small-gutter) 0;
+  z-index: 20;
+}
+
+.Menu._belowParent {
+  position: absolute;
+  left: -1px;
+  top: 100%;
+}
+
+.Menu > ._Row {
+  padding: var(--medium-gutter) var(--large-gutter);
+  font-size: var(--slightly-small-font-size);
+  white-space: nowrap;
+}
+
+.Menu > ._Row._disabled {
+  color: var(--very-muted-color);
+}
+
+.Menu > ._Row:not(.disabled):hover {
+  background: var(--secondary-color);;
+}

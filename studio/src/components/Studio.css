@@ -1,0 +1,606 @@
+body {
+  margin: 0;
+
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+
+  overflow: hidden;
+}
+
+#studioRoot {
+  --very-light-primary-color: #667e98;
+  --light-primary-color: #657e98;
+  --primary-color: #3b638e;
+  --dark-primary-color: #165292;
+
+  --muted-light-primary-color: #486789;
+  --muted-primary-color: #384e66;
+
+  --secondary-color: #413d65;
+
+  --default-color: #eeeeee;
+  --slightly-muted-color: #cccccc;
+  --muted-color: #7d7d7d;
+  --very-muted-color: #666666;
+
+  --very-dark-canvas-color: #000000;
+  --dark-canvas-color: #111111;
+  --slightly-dark-canvas-color: #1f1f1f;
+  --canvas-color: #222222;
+  --slightly-light-canvas-color: #313131;
+  --light-canvas-color: #414141;
+  --very-light-canvas-color: #525252;
+
+  --soft-success-5-canvas-color: #34b355;
+  --soft-success-5-color: white;
+  --soft-success-4-canvas-color: #34b355;
+  --soft-success-4-color: white;
+  --soft-success-3-canvas-color: #34b355;
+  --soft-success-3-color: white;
+  --soft-success-2-canvas-color: #34b355;
+  --soft-success-2-color: white;
+  --soft-success-1-canvas-color: #34b355;
+  --soft-success-1-color: white;
+  --soft-success-0-canvas-color: #414141;
+  --soft-success-0-color: white;
+  --soft-success-unknown-canvas-color: var(--slightly-light-canvas-color);
+  --soft-success-unknown-color: var(--slightly-muted-color);
+
+  --hard-success-5-canvas-color: #34b355;
+  --hard-success-5-color: white;
+  --hard-success-4-canvas-color: #34b355;
+  --hard-success-4-color: white;
+  --hard-success-3-canvas-color: #6cca84;
+  --hard-success-3-color: white;
+  --hard-success-2-canvas-color: #e6c83b;
+  --hard-success-2-color: white;
+  --hard-success-1-canvas-color: #ce943c;
+  --hard-success-1-color: white;
+  --hard-success-0-canvas-color: #ca3e47;
+  --hard-success-0-color: white;
+  --hard-success-unknown-canvas-color: var(--slightly-light-canvas-color);
+  --hard-success-unknown-color: var(--slightly-muted-color);
+
+  --checkbox-label-gap: var(--tiny-gutter);
+
+  --default-border-width: 1px;
+  --thick-border-width: 3px;
+
+  --default-border-color: var(--very-light-canvas-color);
+  --default-border: var(--default-border-width) solid
+    var(--default-border-color);
+
+  --dark-border-color: var(--dark-canvas-color);
+  --dark-border: var(--default-border-width) solid var(--dark-border-color);
+
+  --default-grid-line-width: var(--default-border-width);
+  --thick-grid-line-width: var(--thick-border-width);
+
+  --default-grid-line-color: var(--default-border-color);
+  --default-grid-line: var(--default-grid-line-width) solid
+    var(--default-grid-line-color);
+
+  --small-border-radius: 2px;
+  --medium-border-radius: 4px;
+  --large-border-radius: 6px;
+
+  --teeny-gutter: 1px;
+  --tiny-gutter: 2px;
+  --small-gutter: 4px;
+  --medium-gutter: 8px;
+  --large-gutter: 16px;
+  --huge-gutter: 24px;
+
+  --default-sans-serif-font-family: verdana, sans-serif;
+  --default-monospace-font-family: monaco, monospace;
+
+  --string-literal-font-family: helvetica, sans-serif;
+
+  --very-small-font-size: 10px;
+  --small-font-size: 12px;
+  --slightly-small-font-size: 14px;
+  --normal-font-size: 16px;
+  --large-font-size: 20px;
+
+  --default-code-font-family: var(--default-monospace-font-family);
+
+  --very-small-code-font-size: 9px;
+  --small-code-font-size: 10px;
+  --slightly-small-code-font-size: 11px;
+  --normal-code-font-size: 12px;
+  --large-code-font-size: 14px;
+
+  --code-default-color: var(--default-color);
+  --code-field-color: var(--default-color);
+  --code-predicate-color: var(--light-primary-color);
+  --code-property-color: #f1d790;
+
+  --very-light-entity-view-opacity: 0.3;
+  --light-entity-view-opacity: 0.35;
+  --default-entity-view-opacity: 0.4;
+  --dark-entity-view-opacity: 0.45;
+  --very-dark-entity-view-opacity: 0.5;
+
+  --default-bbox-view-color: 255, 229, 124;
+  --target-value-view-color: 133, 72, 224;
+  --extracted-value-view-color: 64, 136, 230;
+
+  --default-bbox-view-outline-width: var(--default-border-width);
+
+  --selected-target-value-view-outline: var(--thick-grid-line-width) solid
+    rgba(var(--target-value-view-color), 1);
+}
+
+#studioRoot {
+  /* Apply default styles for the app. */
+  font: var(--normal-font-size)/normal var(--default-sans-serif-font-family);
+  cursor: default;
+  color: var(--default-color);
+  background: var(--canvas-color);
+
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  min-width: 100%;
+  min-height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+
+  border-left: var(--default-border);
+
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr var(--large-font-size);
+}
+
+.WithBackground {
+  background: var(--canvas-color);
+}
+
+.Elevated1 {
+  z-index: 1;
+}
+
+.SoftSuccess5of5 {
+  color: var(--soft-success-5-color);
+  background: var(--soft-success-5-canvas-color);
+}
+
+.SoftSuccess4of5 {
+  color: var(--soft-success-4-color);
+  background: var(--soft-success-4-canvas-color);
+}
+
+.SoftSuccess3of5 {
+  color: var(--soft-success-3-color);
+  background: var(--soft-success-3-canvas-color);
+}
+
+.SoftSuccess2of5 {
+  color: var(--soft-success-2-color);
+  background: var(--soft-success-2-canvas-color);
+}
+
+.SoftSuccess1of5 {
+  color: var(--soft-success-1-color);
+  background: var(--soft-success-1-canvas-color);
+}
+
+.SoftSuccess0of5 {
+  color: var(--soft-success-0-color);
+  background: var(--soft-success-0-canvas-color);
+}
+
+.SoftSuccessUnknown {
+  color: var(--soft-success-unknown-color);
+  background: var(--soft-success-unknown-canvas-color);
+}
+
+.HardSuccess5of5 {
+  color: var(--hard-success-5-color);
+  background: var(--hard-success-5-canvas-color);
+}
+
+.HardSuccess4of5 {
+  color: var(--hard-success-4-color);
+  background: var(--hard-success-4-canvas-color);
+}
+
+.HardSuccess3of5 {
+  color: var(--hard-success-3-color);
+  background: var(--hard-success-3-canvas-color);
+}
+
+.HardSuccess2of5 {
+  color: var(--hard-success-2-color);
+  background: var(--hard-success-2-canvas-color);
+}
+
+.HardSuccess1of5 {
+  color: var(--hard-success-1-color);
+  background: var(--hard-success-1-canvas-color);
+}
+
+.HardSuccess0of5 {
+  color: var(--hard-success-0-color);
+  background: var(--hard-success-0-canvas-color);
+}
+
+.HardSuccessUnknown {
+  color: var(--hard-success-unknown-color);
+  background: var(--hard-success-unknown-canvas-color);
+}
+
+.SlightlyMutedText {
+  color: var(--slightly-muted-color) !important;
+}
+
+.MutedText {
+  color: var(--muted-color) !important;
+}
+
+.VeryMutedText {
+  color: var(--very-muted-color) !important;
+}
+
+.VerySmallText {
+  font-size: var(--very-small-font-size) !important;
+}
+
+.SmallText {
+  font-size: var(--small-font-size) !important;
+}
+
+.SlightlySmallText {
+  font-size: var(--slightly-small-font-size) !important;
+}
+
+.NormalSizedText {
+  font-size: var(--normal-font-size) !important;
+}
+
+.LargeText {
+  font-size: var(--large-font-size) !important;
+}
+
+.VerySmallCodeText {
+  font-size: var(--very-small-code-font-size) !important;
+}
+
+.SmallCodeText {
+  font-size: var(--small-code-font-size) !important;
+}
+
+.SlightlySmallCodeText {
+  font-size: var(--slightly-small-code-font-size) !important;
+}
+
+.NormalSizedCodeText {
+  font-size: var(--normal-code-font-size) !important;
+}
+
+.LargeCodeText {
+  font-size: var(--large-code-font-size) !important;
+}
+
+.NoWrap {
+  white-space: nowrap;
+}
+
+.ElidingText {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.DisallowUserSelection {
+  user-select: none;
+}
+
+.AllowUserSelection {
+  user-select: text !important;
+}
+
+.DisallowLineBreaks {
+  white-space: nowrap;
+}
+
+.AllowLineBreaks {
+  white-space: normal;
+}
+
+.HangingIndent {
+  padding-left: var(--large-gutter);
+  text-indent: calc(-1 * var(--large-gutter));
+}
+
+.StringLiteral {
+  font-family: var(--string-literal-font-family);
+  font-size: var(--slightly-small-font-size);
+}
+
+.StringLiteral_InRulesTable {
+  display: inline-block; /* Avoid line breaks. */
+  text-indent: 0px; /* Compatibility with hanging indent classes. */
+}
+
+.StringLiteral::before {
+  content: "“";
+}
+.StringLiteral::after {
+  content: "”";
+}
+
+.CenteredText {
+  text-align: center;
+}
+
+.RightAlignedText {
+  text-align: right;
+}
+
+.LeftAlignedText {
+  text-align: left;
+}
+
+.CenterInParent {
+  /* The parent needs to be positioned. */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.CenteredContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+
+  overflow: hidden; /* I'm not sure this belongs here. */
+}
+
+.BottomRightAlignedContainer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+  align-content: flex-end;
+}
+
+.EntityText {
+  font-family: var(--string-literal-font-family);
+  font-size: var(--slightly-small-font-size);
+}
+
+.Code {
+  font-family: var(--default-code-font-family);
+  font-size: var(--normal-code-font-size);
+  color: var(--code-default-color);
+}
+
+.EntityType {
+  font-family: var(--default-code-font-family);
+  font-size: var(--normal-code-font-size);
+  color: var(--code-default-color);
+}
+
+.Field {
+  font-family: var(--default-code-font-family);
+  font-size: var(--normal-code-font-size);
+  color: var(--code-field-color);
+}
+
+.Predicate {
+  font-family: var(--default-code-font-family);
+  font-size: var(--normal-code-font-size);
+  color: var(--code-predicate-color);
+}
+
+.Property {
+  font-family: var(--default-code-font-family);
+  font-size: var(--normal-code-font-size);
+  color: var(--code-property-color);
+}
+
+#studioRoot button {
+  border: var(--default-border-width) solid var(--light-primary-color);
+  border-radius: var(--medium-border-radius);
+  padding-left: var(--medium-gutter);
+  padding-right: var(--medium-gutter);
+  padding-top: var(--small-gutter);
+  padding-bottom: var(--small-gutter);
+
+  color: var(--default-color);
+  background: var(--primary-color);
+
+  user-select: none;
+}
+
+#studioRoot button:disabled {
+  border: var(--default-border-width) solid var(--muted-light-primary-color);
+  color: var(--muted-color);
+  background: var(--muted-primary-color);
+}
+
+#studioRoot button:not(:disabled):hover {
+  background: var(--dark-primary-color);
+}
+
+#studioRoot select {
+  margin: 0;
+}
+
+#studioRoot input {
+  color: black;
+  margin: 0;
+}
+
+#studioRoot textarea {
+  color: black;
+}
+
+.DialogButtons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: var(--large-gutter);
+}
+
+.DialogButtons > :not(:first-child) {
+  margin-left: var(--small-gutter);
+}
+
+.CenteredStack {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  justify-items: center;
+  align-content: center;
+  justify-content: center;
+
+  overflow: hidden; /* I'm not sure this belongs here. */
+}
+
+.CenteredStack > :not(:first-child) {
+  margin-top: var(--medium-gutter);
+}
+
+/* Bootstrap hacks (?) */
+.FakeAnchor,
+.FakeAnchor:hover,
+.FakeAnchor:active,
+.FakeAnchor:focus {
+  color: unset;
+  text-decoration: unset;
+  cursor: default;
+}
+
+.SVGButton {
+  display: inline-flex;
+  align-items: center;
+}
+
+.TooltipContainer {
+  position: relative;
+  pointer-events: auto !important;
+  overflow: visible !important;
+}
+
+.Tooltip {
+  padding: var(--medium-gutter);
+  color: var(--default-color);
+  background: var(--canvas-color);
+  border: var(--default-border);
+  border-radius: var(--medium-border-radius);
+
+  font-family: var(--default-sans-serif-font-family);
+  font-size: var(--small-font-size);
+
+  white-space: normal;
+  width: 250px;
+
+  text-align: left;
+
+  position: absolute;
+  z-index: 5;
+
+  transition-property: visibility;
+  transition-delay: 1.5s;
+
+  /*
+   * display cannot be transitioned on a delay.
+   *
+   * visibility: hidden results in the invisible element's border being
+   *   taken into account by Chrome when drawing the default blue border
+   *   around the currently-focused element (when a parent is focused).
+   *
+   * So for now we have the visibility code in here,
+   * but it's not doing anything, because the element
+   * starts with display: none, and goes to display: block and
+   * visibility: visible simultaneously, which I guess causes
+   * the transition not to fire.
+   */
+  display: none;
+  visibility: hidden;
+}
+
+.TooltipContainer:hover > .Tooltip {
+  display: block;
+  visibility: visible;
+}
+
+.Tooltip._right_hangDown {
+  left: 100%;
+  top: 0;
+  transform: translate(var(--small-gutter), 0);
+}
+
+.Tooltip._left_hangDown {
+  right: 100%;
+  top: 0;
+  transform: translate(calc(-1 * var(--small-gutter)), 0);
+}
+
+.Tooltip._top {
+  bottom: 100%;
+  left: 50%;
+  transform: translate(-50%, calc(-1 * var(--small-gutter)));
+}
+
+.Tooltip._bottom {
+  top: 100%;
+  left: 50%;
+  transform: translate(-50%, var(--small-gutter));
+}
+
+.SimpleVerticalStack {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.SimpleVerticalStack > :not(:first-child) {
+  margin-top: var(--huge-gutter);
+}
+
+.SimpleHorizontalStack {
+  display: flex;
+  flex-flow: row;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.SimpleHorizontalStack > :not(:first-child) {
+  margin-left: var(--huge-gutter);
+}
+
+.TeenyPadding {
+  padding: var(--teeny-gutter);
+}
+
+.TinyPadding {
+  padding: var(--tiny-gutter);
+}
+
+.SmallPadding {
+  padding: var(--small-gutter);
+}
+
+.MediumPadding {
+  padding: var(--medium-gutter);
+}
+
+.LargePadding {
+  padding: var(--large-gutter);
+}
+
+.HugePadding {
+  padding: var(--huge-gutter);
+}

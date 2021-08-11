@@ -1,0 +1,9 @@
+.BBoxView {
+  background: rgba(var(--default-bbox-view-color),
+                   var(--very-light-entity-view-opacity));
+  outline: 1px solid rgba(var(--default-bbox-view-color), 1);
+}
+
+.BBoxView:hover {
+  outline: 1px solid black;
+}

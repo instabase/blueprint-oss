@@ -1,0 +1,11 @@
+.AddFieldDialog {
+  display: grid;
+  grid-template-columns: min-content 1fr;
+  grid-gap: var(--tiny-gutter) var(--checkbox-label-gap);
+  align-items: center;
+}
+
+.AddFieldDialog > ._description {
+  grid-column: span 2;
+  margin-bottom: var(--medium-gutter);
+}

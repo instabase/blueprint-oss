@@ -1,0 +1,25 @@
+matrix:
+  include:
+    - language: python
+      python:
+        - "3.7"
+      install:
+        - pip install mypy
+      script:
+        - ./mypy.sh
+
+        - cd blueprint
+        - ./tests.sh
+        - cd ..
+    - language: node_js
+      node_js:
+        - 12
+      install:
+        - cd studio
+        - yarn install
+        - cp travis/* .
+        - cd ..
+      script:
+        - cd studio
+        - yarn type-check
+        - yarn jest

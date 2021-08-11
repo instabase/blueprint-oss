@@ -1,0 +1,5 @@
+.Dropdown {
+  color: var(--default-color);
+  background: var(--slightly-light-canvas-color);
+  border-radius: var(--small-radius);
+}
