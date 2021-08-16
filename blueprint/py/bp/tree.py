@@ -403,7 +403,7 @@ class PatternNode(Node):
       root = reduce(
         lambda L1, L2: combine(
         L1, L2, all_or_nothing=True), ordered_trees)
-      return _validated(distribute_rules(root, rules))
+      return _validated(optimize_rule_distribution(root, rules))
     return BoundPatternNode(
       document=document,
       child=order_tree().bound_to(document),
@@ -700,7 +700,7 @@ def extract(*rules: Rule, field_types: Optional[Dict[Field, str]] = None) \
 
 def combine(*nodes: Node,
             all_or_nothing: bool = False,
-            allowed_to_overlap: Iterable[Iterable[Field]]=tuple()) -> Node:
+            allowed_to_overlap: Iterable[Iterable[Field]] = tuple()) -> Node:
   """Combine several extraction trees.
 
   Given extraction trees for separate parts of the document, combine them into
@@ -802,42 +802,61 @@ def build_tree_from_graph(
   return node_associations[next(iter(graph.vertices))]
   
 
-def distribute_rules(node: Node, rules: Tuple[Rule, ...]) -> Node:
-  """Distribute the rules in a CombineNode extraction subtree.
+def optimize_rule_distribution(
+    node: Node,
+    rules: Tuple[Rule, ...] = tuple()) -> Node:
+  """Optimize the rule distribution in an extraction tree.
+
+  Pushes all rules down to the lowest level of the tree where they are
+  decidable.
 
   We do not mutate the input tree. The returned tree will be deep-copied as
   needed.
 
   Args:
-    node: An extraction tree node. This node and its descendants should all be
-      of type CombineNode or LeafNode.
-    rules: Rules to add to the tree.
+    node: An extraction tree node.
+    rules: Rules to add to the tree. Rules that are already in the
+      tree will still be kept. The fields of these rules must be legal fields of
+      the node.
   """
 
   rules = tuple(chain(rules, node.rules))
 
-  if isinstance(node, CombineNode):
-    def remake_combine_node_child(child: Node) -> Node:
-      def has_decidable_atom(rule: Rule) -> bool:
-        return len(tuple(filter(
-          lambda A: child.is_decidable(A), get_atoms(rule)))) != 0
-      child_rules = tuple(filter(lambda R: has_decidable_atom(R), rules))
-      return distribute_rules(child, child_rules)
+  def remake_child(child: Node) -> Node:
+    def has_decidable_atom(rule: Rule) -> bool:
+      return len(tuple(filter(
+        child.is_decidable, get_atoms(rule)))) != 0
+    child_rules = tuple(filter(has_decidable_atom, rules))
+    return optimize_rule_distribution(child, child_rules)
 
-    # "Spanning" means that the rule/component involves fields from both of the
-    # CombineNode's child_nodes.
+  if isinstance(node, CombineNode) or isinstance(node, MergeNode):
+    node_children = (node.node1, node.node2) if isinstance(node, CombineNode) \
+        else node.children
+
+    # "Spanning" means that the rule/component involves fields from multiple of
+    # the Node's child nodes.
     spanning_rules = tuple(filter(
-      negate(disj([
-        node.node1.is_decidable,
-        node.node2.is_decidable])),
+        negate(disj(tuple(child.is_decidable for child in node_children))),
       rules))
 
+    if isinstance(node, CombineNode):
+      return dataclasses.replace(
+        node,
+        node1=remake_child(node.node1),
+        node2=remake_child(node.node2),
+        rules=spanning_rules)
+    else:
+      return dataclasses.replace(
+        node,
+        children=tuple(map(remake_child, node_children)),
+        rules=spanning_rules)
+
+  elif isinstance(node, PickBestNode):
     return dataclasses.replace(
-      node,
-      node1=remake_combine_node_child(node.node1),
-      node2=remake_combine_node_child(node.node2),
-      rules=spanning_rules)
+        node,
+        children=tuple(map(remake_child, node.children)),
+        rules=frozenset())
 
   else:
-    assert isinstance(node, LeafNode)
+    assert isinstance(node, LeafNode) or isinstance(node, PatternNode)
     return node.with_rules(rules)
