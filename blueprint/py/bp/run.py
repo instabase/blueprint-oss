@@ -14,7 +14,7 @@ from .entity import Entity, dump_to_json
 from .results import Results, generate_results
 from .runtime_tracker import DocRuntimeInfo, RuntimeTracker, Step
 from .timeout import timeout
-from .tree import Node
+from .tree import Node, optimize_rule_distribution
 
 
 def run_model(doc: Document, root: Node, config: Config=Config()) \
@@ -42,8 +42,9 @@ def run_model(doc: Document, root: Node, config: Config=Config()) \
 
     bp_logging.info('Binding extraction tree')
     runtime_tracker.start(Step.BINDING)
-    root.validate()
-    bound_root = root.bound_to(doc)
+    optimized_root = optimize_rule_distribution(root)
+    optimized_root.validate()
+    bound_root = optimized_root.bound_to(doc)
     runtime_tracker.end(Step.BINDING)
 
     try:
