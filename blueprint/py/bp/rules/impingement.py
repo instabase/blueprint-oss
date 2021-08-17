@@ -10,7 +10,6 @@ label/value pair are correct.
 
 from dataclasses import dataclass
 from itertools import chain
-from mypy_extensions import VarArg
 from typing import Callable, Optional, Tuple
 from uuid import uuid4
 

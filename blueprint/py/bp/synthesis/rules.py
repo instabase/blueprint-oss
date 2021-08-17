@@ -3,7 +3,6 @@ import json
 from dataclasses import dataclass, replace
 from functools import reduce
 from itertools import chain, combinations
-from mypy_extensions import VarArg
 from typing import Callable, Dict, FrozenSet, List, Optional, Tuple, Type
 
 from ..document import Document
@@ -130,7 +129,7 @@ def find_spatial_rules(extraction: Extraction, doc: Document) \
   left_columns = eliminate_subsets(left_columns, right_columns)
   right_columns = eliminate_subsets(right_columns, left_columns)
 
-  RuleBuilder = Callable[[VarArg(Field)], Rule]
+  RuleBuilder = Callable[..., Rule]
 
   def get_component_rules(component: Component,
                           rule_builder: RuleBuilder) -> Tuple[Rule, ...]:
