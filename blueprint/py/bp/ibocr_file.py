@@ -55,3 +55,7 @@ def generate_doc_from_ibocr(raw_json: Any, name: str) -> Document:
   input_pages = tuple(prepare_input_page(page_number)
     for page_number in range(len(layouts)))
   return build_document(input_pages, name)
+
+def load_doc_from_ibocr(path: Path) -> Document:
+  with path.open() as f:
+    return generate_doc_from_ibocr(json.load(f), path.stem)

@@ -56,6 +56,7 @@ def build_document(
   Args:
     input_pages: The pages of the document and the words on those pages.
       The pages should be given in order.
+    name: The name of the document.
   """
 
   sorted_page_numbers = tuple(

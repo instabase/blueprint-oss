@@ -16,6 +16,8 @@ from ..config import Config, load_config
 from ..document import Document, load_doc
 from ..extraction import Extraction, load_extraction
 from ..functional import all_equal, nonempty, uniq
+from ..google_ocr_file import load_doc_from_google_ocr
+from ..ibocr_file import load_doc_from_ibocr
 from ..model import load_model, save_model
 from ..results import save_results
 from ..run import run_model
@@ -82,19 +84,25 @@ def main_run_model(args: Namespace) -> None:
         return path.parent / file_path
     return list(map(compute_path, file_paths))
 
-  doc_paths: List[Path] = []
-
+  docs: Tuple[Document, ...] = tuple()
   if args.bundle:
     doc_path = Path(args.bundle) / Path('selectedDoc.json')
     if not doc_path.is_file():
       raise RuntimeError('invalid bundle; missing selectedDoc.json')
-    doc_paths += [doc_path]
+    docs += (load_doc(doc_path),)
   if args.doc_jsons:
-    doc_paths += [Path(p) for p in args.doc_jsons]
+    doc_paths = [Path(p) for p in args.doc_jsons]
+    docs += tuple(load_doc(path) for path in doc_paths)
   if args.doc_jsons_list:
-    doc_paths += read_paths_from_file(Path(args.doc_jsons_list))
+    doc_paths = read_paths_from_file(Path(args.doc_jsons_list))
+    docs += tuple(load_doc(path) for path in doc_paths)
 
-  docs = tuple(load_doc(path) for path in doc_paths)
+  if args.google_ocr_jsons:
+    docs += tuple(load_doc_from_google_ocr(Path(path))
+      for path in args.google_ocr_jsons)
+  if args.ibocr_jsons:
+    docs += tuple(load_doc_from_ibocr(Path(path))
+      for path in args.ibocr_jsons)
 
   # Set up the output directory
   # ===========================
@@ -148,6 +156,13 @@ def init_run_model(subparsers: _SubParsersAction) -> None:
     'paths may be absolute, '
     'or relative to the directory containing this file',
     type=str, metavar='LIST_FILE')
+  parser.add_argument('-g', '--google-ocr-jsons',
+    help='Google OCR JSON files for input documents',
+    type=str, metavar='FILE', nargs='*', default=list())
+  parser.add_argument('-i', '--ibocr-jsons',
+    help='IBOCR JSON files for input documents',
+    type=str, metavar='FILE', nargs='*', default=list())
+
   parser.add_argument('-o', '--output-dir',
     help='Output directory',
     type=str)

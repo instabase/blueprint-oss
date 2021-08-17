@@ -74,7 +74,7 @@ def instantiate(t: typing.Type[T], v: typing.Any,
   # These may not be part of the official API...
   KT = typing.KT # type: ignore
   VT = typing.VT # type: ignore
-  def get_forward_arg(t: typing.ForwardRef) -> str:
+  def get_forward_arg(t: typing.ForwardRef) -> str: # type: ignore
     return t.__forward_arg__
 
   def is_optional(t: typing.Type[T]) -> bool:
@@ -141,7 +141,7 @@ def instantiate(t: typing.Type[T], v: typing.Any,
     else:
       return v # type: ignore
 
-  elif isinstance(t, typing.ForwardRef):
+  elif isinstance(t, typing.ForwardRef): # type: ignore
     t_name = get_forward_arg(t)
     if FRR and t_name in FRR:
       return instantiate(
