@@ -11,7 +11,7 @@ Start by cloning this repo to your machine.
 To run on a sample paystub:
 
 - Add `path/to/blueprint-oss/blueprint/py` to your `PYTHONPATH`
-- Run `pip3 install path/to/blueprint-oss/blueprint/requirements.txt`
+- Run `pip3 install -r path/to/blueprint-oss/blueprint/requirements.txt`
 - From the `blueprint/reference_extractions/paystubs` folder, run
 `python3 paystubs.py run_model -v -g ocr/sample_paystub.jpg.json`
 
