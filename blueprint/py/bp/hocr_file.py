@@ -67,6 +67,6 @@ def load_doc_from_hocr(path: Path) -> Document:
   abs_path = path.absolute()
   if not abs_path.exists():
     raise ValueError(f"Input path {path} does not exist")
-  if not abs_path.is_fifo():
+  if not abs_path.is_file():
     raise ValueError(f"Input path {path} is not a file")
   return generate_doc_from_hocr(HOCRDocument(str(abs_path)).body, path.stem)
