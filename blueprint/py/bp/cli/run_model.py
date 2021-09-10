@@ -18,6 +18,7 @@ from ..extraction import Extraction, load_extraction
 from ..functional import all_equal, nonempty, uniq
 from ..google_ocr_file import load_doc_from_google_ocr
 from ..ibocr_file import load_doc_from_ibocr
+from ..hocr_file import load_doc_from_hocr
 from ..model import load_model, save_model
 from ..results import save_results
 from ..run import run_model
@@ -99,7 +100,10 @@ def main_run_model(args: Namespace) -> None:
 
   if args.google_ocr_jsons:
     docs += tuple(load_doc_from_google_ocr(Path(path))
-      for path in args.google_ocr_jsons)
+                  for path in args.google_ocr_jsons)
+  if args.tesseract_hocrs:
+    docs += tuple(load_doc_from_hocr(Path(path))
+      for path in args.tesseract_hocrs)
   if args.ibocr_jsons:
     docs += tuple(load_doc_from_ibocr(Path(path))
       for path in args.ibocr_jsons)
@@ -162,6 +166,9 @@ def init_run_model(subparsers: _SubParsersAction) -> None:
   parser.add_argument('-i', '--ibocr-jsons',
     help='IBOCR JSON files for input documents',
     type=str, metavar='FILE', nargs='*', default=list())
+  parser.add_argument('-r', '--tesseract-hocrs',
+                      help='Tesseract HOCR files for input documents',
+                      type=str, metavar='FILE', nargs='*', default=list())
 
   parser.add_argument('-o', '--output-dir',
     help='Output directory',
