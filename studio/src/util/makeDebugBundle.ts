@@ -15,6 +15,11 @@ export default async function makeDebugBundle(
   sessionContext: TheSessionContext,
 ): Promise<void>
 {
+  alert('Not implemented');
+
+  // If you want to fix this, be my guest.
+
+  /*
   const bundleName = `StudioDebugData-${new Date().toISOString()}`;
 
   console.log('Building debug data');
@@ -104,4 +109,5 @@ export default async function makeDebugBundle(
   );
 
   console.log('Done generating debug data');
+  */
 }
