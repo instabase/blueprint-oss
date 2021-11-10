@@ -36,7 +36,9 @@ export type t = {
   formatVersion: number;
   uuid: UUID;
 
-  samplesPath: string;
+  imagesDirName: string;
+  ocrDirName: string;
+
   selectedDocName: string | undefined;
 
   targets: Targets.t;
