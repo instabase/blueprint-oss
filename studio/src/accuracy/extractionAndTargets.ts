@@ -1,16 +1,16 @@
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Extraction from 'studio/foundation/extraction';
 
 import {Nonempty, isEmptyArray} from 'studio/util/types';
 
 export type t = [
   Extraction.t | undefined,
-  RecordTargets.t | undefined,
+  DocTargets.t | undefined,
 ];
 
 export type PopulatedExtractionAndTargets = [
   Extraction.t,
-  RecordTargets.t,
+  DocTargets.t,
 ];
 
 export function isPopulated(pair: t):

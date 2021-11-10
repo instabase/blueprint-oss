@@ -1,6 +1,6 @@
 import memo from 'memoizee';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Entity from 'studio/foundation/entity';
 import * as Extraction from 'studio/foundation/extraction';
 import * as TargetValue from 'studio/foundation/targetValue';
@@ -96,19 +96,19 @@ function alphanumericLowerCase(s: string): string {
 export const FLA = memo(
   function(
     extraction: Extraction.t,
-    recordTargets: RecordTargets.t,
+    docTargets: DocTargets.t,
     flaFields: string,
   ): number
   {
-    // console.log('Computing FLA', extraction, recordTargets, flaFields);
+    // console.log('Computing FLA', extraction, docTargets, flaFields);
 
     const pairs: [Entity.t | undefined, TargetValue.t][] =
-      RecordTargets.fields(recordTargets).filter(
+      DocTargets.fields(docTargets).filter(
         field => flaFields.length == 0 || flaFields.includes(field)
       ).map(
         field => ([
           Extraction.value(extraction, field),
-          RecordTargets.value(recordTargets, field) as TargetValue.t,
+          DocTargets.value(docTargets, field) as TargetValue.t,
         ])
       );
 

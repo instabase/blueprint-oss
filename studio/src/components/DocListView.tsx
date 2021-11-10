@@ -4,27 +4,27 @@ import SessionContext, {Value as TheSessionContext} from 'studio/context/Session
 
 import TableView from 'studio/components/TableView';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 
 import * as Compare from 'studio/accuracy/compare';
 
 import * as Model from 'studio/blueprint/model';
 import * as Results from 'studio/blueprint/results';
 
-import * as RecordRun from 'studio/state/recordRun';
+import * as DocRun from 'studio/state/docRun';
 import * as ModelRun from 'studio/state/modelRun';
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
 
-import shortRecordName from 'studio/util/shortRecordName';
-import {preloadResourcesForRecord} from 'studio/util/preloadDocResources';
+import shortDocName from 'studio/util/shortDocName';
+import {preloadResourcesForDoc} from 'studio/util/preloadDocResources';
 import {UUID} from 'studio/util/types';
 import {booleanSort, reversedNumericalSort, stringSort} from 'studio/util/sorting';
 import {Nonempty} from 'studio/util/types';
 
 type Props = {
   project: Project.t;
-  recordNames: string[];
+  docNames: string[];
   children?: JSX.Element | JSX.Element[];
 };
 
@@ -38,14 +38,14 @@ export default function DocListView(props: Props) {
            modelRun => modelRun.pin)).reverse()
      : [];
 
-  const rootRows = rows(props.project, props.recordNames, modelRuns);
+  const rootRows = rows(props.project, props.docNames, modelRuns);
 
   return (
     <TableView
       rootRows={rootRows}
       spec={
         spec(
-          props.recordNames,
+          props.docNames,
           props.project,
           actionContext,
           sessionContext,
@@ -59,17 +59,17 @@ export default function DocListView(props: Props) {
   );
 }
 
-type RowRecordRunData = RecordRun.t | undefined;
+type RowDocRunData = DocRun.t | undefined;
 
 type RowProps = {
-  recordName: string;
+  docName: string;
   isSelected: boolean;
-  recordTargets: RecordTargets.t | undefined;
-  data: RowRecordRunData[]; // One per visible model run.
+  docTargets: DocTargets.t | undefined;
+  data: RowDocRunData[]; // One per visible model run.
 };
 
 function spec(
-  recordNames: string[],
+  docNames: string[],
   project: Project.t,
   actionContext: TheActionContext,
   sessionContext: TheSessionContext,
@@ -79,38 +79,38 @@ function spec(
   return {
     columns: [
       {
-        name: 'Record',
+        name: 'Doc',
         fractionalWidth: 4,
-        cellContents: (row: RowProps) => shortRecordName(row.recordName),
-        comparisonFunction: stringSort((row: RowProps) => row.recordName),
+        cellContents: (row: RowProps) => shortDocName(row.docName),
+        comparisonFunction: stringSort((row: RowProps) => row.docName),
         footer: (
           <div className="TableView_Footer">
-            ({numRows} records total)
+            ({numRows} docs total)
           </div>
         ),
       },
       ...(
         Project.annotationMode(project) ? []
-          : modelRunColumns(recordNames, modelRuns, project)
+          : modelRunColumns(docNames, modelRuns, project)
       ),
     ],
     localStorageSuffix: `DocListView-${project.uuid}-${modelRuns.length}`,
-    rowID: (row: RowProps) => row.recordName,
+    rowID: (row: RowProps) => row.docName,
     rowIsSelected: (row: RowProps) => row.isSelected,
     onRowSelected: (row: RowProps,
                     parents: RowProps[],
                     prevRow: RowProps | undefined,
                     nextRow: RowProps | undefined) => {
       actionContext.dispatchAction({
-        type: 'SetSelectedRecordName',
-        recordName: row.recordName,
+        type: 'SetSelectedDocName',
+        docName: row.docName,
       });
 
       for (let sibling of [prevRow, nextRow]) {
         if (sibling != undefined) {
-          preloadResourcesForRecord(
+          preloadResourcesForDoc(
             project,
-            sibling.recordName,
+            sibling.docName,
             sessionContext,
           );
         }
@@ -134,23 +134,23 @@ function scoreText(score: number | undefined) {
   }
 }
 
-function modelScore(rowRecordRunData: RowRecordRunData) {
-  const results = rowRecordRunData && getResults(rowRecordRunData);
+function modelScore(rowDocRunData: RowDocRunData) {
+  const results = rowDocRunData && getResults(rowDocRunData);
   return results && Results.bestOverallExtractionScore(results);
 }
 
 function FLA(
   row: RowProps,
-  rowRecordRunData: RowRecordRunData,
+  rowDocRunData: RowDocRunData,
   flaFields: string):
     number | undefined
 {
   const extraction =
-    rowRecordRunData && rowRecordRunData.type == 'FinishedRecordRun'
-     ? Results.bestExtraction(rowRecordRunData.results)
+    rowDocRunData && rowDocRunData.type == 'FinishedDocRun'
+     ? Results.bestExtraction(rowDocRunData.results)
      : undefined;
-  return extraction && row.recordTargets &&
-    Compare.FLA(extraction, row.recordTargets, flaFields);
+  return extraction && row.docTargets &&
+    Compare.FLA(extraction, row.docTargets, flaFields);
 }
 
 function FLAText(fla: number | undefined): string {
@@ -171,18 +171,18 @@ function averageText(average: number | undefined): string {
 
 function rows(
   project: Project.t,
-  recordNames: string[],
+  docNames: string[],
   modelRuns: (ModelRun.t | undefined)[]):
     RowProps[]
 {
-  return recordNames.map(
-    recordName => ({
-      recordName,
-      isSelected: recordName == project.selectedRecordName,
-      recordTargets: Project.recordTargets(project, recordName),
+  return docNames.map(
+    docName => ({
+      docName,
+      isSelected: docName == project.selectedDocName,
+      docTargets: Project.docTargets(project, docName),
       data: modelRuns.map(
         modelRun => (
-          modelRun && ModelRun.recordRun(modelRun, recordName)
+          modelRun && ModelRun.docRun(modelRun, docName)
         )
       ),
     })
@@ -196,7 +196,7 @@ function EmptyCell() {
 }
 
 function individualModelRunColumns(
-  recordNames: string[],
+  docNames: string[],
   modelRun: ModelRun.t,
   index: number,
   project: Project.t,
@@ -219,15 +219,15 @@ function individualModelRunColumns(
           return <Cell />;
         } else {
           switch (data.type) {
-            case 'RequestedRecordRun':
+            case 'RequestedDocRun':
               return <Cell />;
-            case 'ActiveRecordRun':
+            case 'ActiveDocRun':
               return <Cell>...</Cell>;
-            case 'CanceledRecordRun':
+            case 'CanceledDocRun':
               return <Cell />;
-            case 'FailedRecordRun':
+            case 'FailedDocRun':
               return <Cell>ERR</Cell>;
-            case 'FinishedRecordRun':
+            case 'FinishedDocRun':
               if (data.results.runtime_info.timed_out) {
                 return <Cell>(T/O)</Cell>;
               } else {
@@ -241,8 +241,8 @@ function individualModelRunColumns(
           {
             averageText(
               Compare.average(
-                modelRun.recordRuns.map(
-                  d => RecordRun.results(d)?.runtime_info.total_ms
+                modelRun.docRuns.map(
+                  d => DocRun.results(d)?.runtime_info.total_ms
                 ).filter(Boolean) as Nonempty<number>
               )
             )
@@ -256,15 +256,15 @@ function individualModelRunColumns(
             return 999999999;
           } else {
             switch (data.type) {
-              case 'RequestedRecordRun':
+              case 'RequestedDocRun':
                 return 9999999999;
-              case 'ActiveRecordRun':
+              case 'ActiveDocRun':
                 return 999999999;
-              case 'CanceledRecordRun':
+              case 'CanceledDocRun':
                 return 99999999;
-              case 'FailedRecordRun':
+              case 'FailedDocRun':
                 return 9999999;
-              case 'FinishedRecordRun':
+              case 'FinishedDocRun':
                 if (data.results.runtime_info.timed_out) {
                   return 999999;
                 } else {
@@ -338,7 +338,7 @@ function individualModelRunColumns(
             FLAText(
               Compare.averageFLA(
                 Project.extractionsAndTargets(
-                  recordNames,
+                  docNames,
                   project.targets,
                   modelRun,
                 ),
@@ -362,23 +362,23 @@ function individualModelRunColumns(
 }
 
 function getResults(
-  rowRecordRunData: RowRecordRunData):
+  rowDocRunData: RowDocRunData):
     Results.t | undefined
 {
-  if (rowRecordRunData?.type == 'FinishedRecordRun') {
-    return rowRecordRunData.results;
+  if (rowDocRunData?.type == 'FinishedDocRun') {
+    return rowDocRunData.results;
   }
 }
 
 function modelRunColumns(
-  recordNames: string[],
+  docNames: string[],
   modelRuns: ModelRun.t[],
   project: Project.t,
 ) {
   return modelRuns.map(
     (modelRun, index) => (
       individualModelRunColumns(
-        recordNames,
+        docNames,
         modelRun,
         index,
         project,

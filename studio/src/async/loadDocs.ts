@@ -2,7 +2,7 @@ import memo from 'memoizee';
 
 import {hasOwnProperty, isArray} from 'studio/util/types';
 
-type RecordName = string;
+type DocName = string;
 
 type WordPolyDict = {
   word: string;
@@ -21,18 +21,18 @@ export type Layout = {
 
 export type Layouts = Record<string, Layout>;
 
-type RecordBlob = {
+type DocBlob = {
   layouts: Layouts;
   lines: Array<Array<WordPolyDict>>;
 };
 
 type Response = {
-  records: Record<RecordName, RecordBlob>;
+  docs: Record<DocName, DocBlob>;
   errors?: Array<any>;
 };
 
 function validateResponse(response: Response): void {
-  if (!hasOwnProperty(response, 'records')) {
+  if (!hasOwnProperty(response, 'docs')) {
     throw new Error();
   }
 
@@ -47,7 +47,7 @@ function validateResponse(response: Response): void {
 
 export async function rawLoadResponse(samplesPath: string): Promise<Response> {
   const response = await fetch(
-    'load-all-records'
+    'load-all-docs'
   );
 
   const blob = await response.json();
@@ -59,56 +59,56 @@ export async function rawLoadResponse(samplesPath: string): Promise<Response> {
 
 export const loadResponse = memo(rawLoadResponse);
 
-export const loadRecordNames = memo(
+export const loadDocNames = memo(
   async function(samplesPath: string): Promise<string[]> {
     const response = await loadResponse(samplesPath);
-    return [...Object.keys(response.records)];
+    return [...Object.keys(response.docs)];
   }
 );
 
-export const loadRecordBlob = memo(
-  async function(samplesPath: string, recordName: string): Promise<RecordBlob> {
+export const loadDocBlob = memo(
+  async function(samplesPath: string, docName: string): Promise<DocBlob> {
     const response = await loadResponse(samplesPath);
-    return response.records[recordName];
+    return response.docs[docName];
   }
 );
 
 export const loadWordPolys = memo(
   async function(
     samplesPath: string,
-    recordName: string,
+    docName: string,
   ): Promise<WordPolyDict[]>
   {
-    const record = await loadRecordBlob(samplesPath, recordName);
-    return record.lines.flat();
+    const doc = await loadDocBlob(samplesPath, docName);
+    return doc.lines.flat();
   }
 );
 
 export const loadLayouts = memo(
   async function(
     samplesPath: string,
-    recordName: string,
+    docName: string,
   ): Promise<Layouts>
   {
-    const record = await loadRecordBlob(samplesPath, recordName);
-    return record.layouts;
+    const doc = await loadDocBlob(samplesPath, docName);
+    return doc.layouts;
   }
 );
 
-export function loadRecordNamesFromResponse(response: Response): string[] {
-  return [...Object.keys(response.records)];
+export function loadDocNamesFromResponse(response: Response): string[] {
+  return [...Object.keys(response.docs)];
 }
 
-export function loadRecordBlobFromResponse(response: Response, recordName: string): RecordBlob {
-  return response.records[recordName];
+export function loadDocBlobFromResponse(response: Response, docName: string): DocBlob {
+  return response.docs[docName];
 }
 
-export function loadWordPolysFromResponse(response: Response, recordName: string): WordPolyDict[] {
-  const record = loadRecordBlobFromResponse(response, recordName);
-  return record.lines.flat();
+export function loadWordPolysFromResponse(response: Response, docName: string): WordPolyDict[] {
+  const doc = loadDocBlobFromResponse(response, docName);
+  return doc.lines.flat();
 }
 
-export function loadLayoutsFromResponse(response: Response, recordName: string): Layouts {
-  const record = loadRecordBlobFromResponse(response, recordName);
-  return record.layouts;
+export function loadLayoutsFromResponse(response: Response, docName: string): Layouts {
+  const doc = loadDocBlobFromResponse(response, docName);
+  return doc.layouts;
 }

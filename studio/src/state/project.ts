@@ -1,7 +1,7 @@
 import memo from 'memoizee';
 import {v4 as uuidv4} from 'uuid';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Entity from 'studio/foundation/entity';
 import * as TargetValue from 'studio/foundation/targetValue';
 import * as Targets from 'studio/foundation/targets';
@@ -15,9 +15,9 @@ import * as Results from 'studio/blueprint/results';
 import * as Node from 'studio/blueprint/node';
 import * as Rule from 'studio/blueprint/rule';
 
-import * as RecordRun from 'studio/state/recordRun';
+import * as DocRun from 'studio/state/docRun';
 import * as ModelRun from 'studio/state/modelRun';
-import * as NodeRecordTargets from 'studio/state/nodeRecordTargets';
+import * as NodeDocTargets from 'studio/state/nodeDocTargets';
 import * as Resource from 'studio/state/resource';
 import * as Settings from 'studio/state/settings';
 
@@ -26,7 +26,7 @@ import * as ExtractionAndTargets from 'studio/accuracy/extractionAndTargets';
 import assert from 'studio/util/assert';
 import {Nonempty, UUID} from 'studio/util/types';
 
-import {loadRecordNames} from 'studio/async/loadRecords';
+import {loadDocNames} from 'studio/async/loadDocs';
 
 // If you make a breaking change to the Project type, bump this number,
 // and projects whose files are in an old version will gracefully fail to load.
@@ -37,7 +37,7 @@ export type t = {
   uuid: UUID;
 
   samplesPath: string;
-  selectedRecordName: string | undefined;
+  selectedDocName: string | undefined;
 
   targets: Targets.t;
 
@@ -69,7 +69,7 @@ export function build(
     uuid: uuidv4(),
 
     samplesPath,
-    selectedRecordName: undefined,
+    selectedDocName: undefined,
 
     targets: Targets.build(),
 
@@ -84,40 +84,40 @@ export function build(
   };
 }
 
-export function hasSelectedRecordName(project: t): boolean {
-  return project.selectedRecordName != undefined;
+export function hasSelectedDocName(project: t): boolean {
+  return project.selectedDocName != undefined;
 }
 
-export function recordTargets(
+export function docTargets(
   project: t,
-  recordName: string | undefined):
-    RecordTargets.t | undefined
+  docName: string | undefined):
+    DocTargets.t | undefined
 {
-  if (recordName == undefined) {
+  if (docName == undefined) {
     return undefined;
   } else {
-    return Targets.recordTargets(project.targets, recordName);
+    return Targets.docTargets(project.targets, docName);
   }
 }
 
-export function selectedRecordTargets(
+export function selectedDocTargets(
   project: t):
-    RecordTargets.t | undefined
+    DocTargets.t | undefined
 {
-  const recordName = project.selectedRecordName;
-  if (recordName != undefined) {
-    return recordTargets(project, recordName);
+  const docName = project.selectedDocName;
+  if (docName != undefined) {
+    return docTargets(project, docName);
   }
 }
 
-export function nodeRecordTargets(
+export function nodeDocTargets(
   project: t,
   node: Node.t | undefined):
-    NodeRecordTargets.t | undefined
+    NodeDocTargets.t | undefined
 {
-  const recordTargets = selectedRecordTargets(project);
-  if (recordTargets != undefined && node != undefined) {
-    return NodeRecordTargets.build(node, recordTargets);
+  const docTargets = selectedDocTargets(project);
+  if (docTargets != undefined && node != undefined) {
+    return NodeDocTargets.build(node, docTargets);
   }
 }
 
@@ -235,67 +235,67 @@ export const modelRunsForCurrentModel = memo(
 export const resultsForCurrentModelAndDoc = memo(
   function(
     project: t,
-    recordName: string):
+    docName: string):
       Results.t | undefined
   {
     return ModelRun.resultsForDoc(
       modelRunsForCurrentModel(project),
-      recordName);
+      docName);
   },
   { max: 10 },
 );
 
-export const resultsForCurrentModelAndSelectedRecordName = memo(
+export const resultsForCurrentModelAndSelectedDocName = memo(
   function(
     project: t):
       Results.t | undefined
   {
-    const recordName = project.selectedRecordName;
-    if (recordName) {
-      return resultsForCurrentModelAndDoc(project, recordName);
+    const docName = project.selectedDocName;
+    if (docName) {
+      return resultsForCurrentModelAndDoc(project, docName);
     }
   },
   { max: 10 },
 );
 
-export const pendingModelRecordRuns = memo(
+export const pendingModelDocRuns = memo(
   function(project: t):
-    Array<RecordRun.PendingRecordRun>
+    Array<DocRun.PendingDocRun>
   {
-    return ModelRun.pendingModelRecordRuns(project.modelRuns);
+    return ModelRun.pendingModelDocRuns(project.modelRuns);
   },
   { max: 10 },
 );
 
 export const extractionsAndTargets = memo(
   function(
-    recordNames: string[],
+    docNames: string[],
     targets: Targets.t | undefined,
     modelRun: ModelRun.t | undefined):
       ExtractionAndTargets.t[]
   {
-    // console.log('Calculating extractions & targets', recordNames, targets, modelRun);
-    return [...recordNames]
-      .map(recordName => {
-        const recordRun =
+    // console.log('Calculating extractions & targets', docNames, targets, modelRun);
+    return [...docNames]
+      .map(docName => {
+        const docRun =
           modelRun &&
-          ModelRun.recordRun(
+          ModelRun.docRun(
             modelRun,
-            recordName);
+            docName);
         const results =
-          recordRun &&
-          RecordRun.results(
-            recordRun);
+          docRun &&
+          DocRun.results(
+            docRun);
         const extraction =
           results &&
           Results.bestExtraction(
             results);
-        const recordTargets =
+        const docTargets =
           targets &&
-          Targets.recordTargets(
+          Targets.docTargets(
             targets,
-            recordName);
-        return [extraction, recordTargets];
+            docName);
+        return [extraction, docTargets];
       })
   },
   { max: 10 },
@@ -350,21 +350,21 @@ export function targetPickingEnabled(project: t): boolean {
   return selectedField(project) != undefined;
 }
 
-export function targetValueForSelectedRecordName(
+export function targetValueForSelectedDocName(
   project: t,
   field: string):
     TargetValue.t | undefined
 {
-  const recordTargets = selectedRecordTargets(project);
-  return recordTargets && RecordTargets.value(recordTargets, field);
+  const docTargets = selectedDocTargets(project);
+  return docTargets && DocTargets.value(docTargets, field);
 }
 
-export const activeRecordNames = memo(
+export const activeDocNames = memo(
   async function(project: t): Promise<string[]> {
-    const recordNames = await loadRecordNames(project.samplesPath);
-    return recordNames.filter(
-      recordName => {
-        const targets = recordTargets(project, recordName);
+    const docNames = await loadDocNames(project.samplesPath);
+    return docNames.filter(
+      docName => {
+        const targets = docTargets(project, docName);
 
         if (project.settings.requiredDocTags) {
           if (targets == undefined) {

@@ -8,7 +8,7 @@ import AddFieldDialog from './AddFieldDialog';
 import TargetValueCell from 'studio/components/TargetValueCell';
 import {Edit2, Plus, Trash2} from 'studio/components/StockSVGs';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Entity from 'studio/foundation/entity';
 import * as Extraction from 'studio/foundation/extraction';
 import * as Doc from 'studio/foundation/doc';
@@ -22,7 +22,7 @@ import * as Node from 'studio/blueprint/node';
 import * as PatternNode from 'studio/blueprint/patternNode';
 import * as Scoring from 'studio/blueprint/scoring';
 
-import * as NodeRecordTargets from 'studio/state/nodeRecordTargets';
+import * as NodeDocTargets from 'studio/state/nodeDocTargets';
 import * as Project from 'studio/state/project';
 
 import NodeViewProps from './NodeViewProps';
@@ -81,7 +81,7 @@ export default function FieldsTable(props: Props) {
         type,
         targetValue:
           props.targets &&
-          RecordTargets.value(
+          DocTargets.value(
             props.targets,
             field),
         extractedValue:
@@ -264,7 +264,7 @@ export default function FieldsTable(props: Props) {
           name: 'Target value',
           fractionalWidth: 1.5,
           cellContents: (row: RowProps) => {
-            if (props.recordName != undefined && props.targets) {
+            if (props.docName != undefined && props.targets) {
               if (!TargetsSchema.hasField(props.project.targets.schema, row.field)) {
                 return (
                   <div className="TableView_Cell">
@@ -277,7 +277,7 @@ export default function FieldsTable(props: Props) {
                 return (
                   <TargetValueCell
                     {...row}
-                    recordName={props.recordName}
+                    docName={props.docName}
                     value={row.targetValue}
                     isSelected={Project.selectedField(props.project) == row.field}
                   />
@@ -434,14 +434,14 @@ function canEditFields(node: Node.t): boolean {
 }
 
 function fieldsFromTargets(
-  recordTargets: RecordTargets.t | undefined):
+  docTargets: DocTargets.t | undefined):
     Record<string, Entity.Type>
 {
-  if (!recordTargets) {
+  if (!docTargets) {
     return {};
   } else {
     const result: Record<string, Entity.Type> = {}
-    recordTargets.assignments.forEach(
+    docTargets.assignments.forEach(
       ({field}) => result[field] = Entity.DefaultType
     );
     return result;
@@ -454,7 +454,7 @@ function showAddFieldsDialog(
     void
 {
   const fields: Record<string, Entity.Type> = {
-    ...fieldsFromTargets(Project.recordTargets(props.project, props.recordName)),
+    ...fieldsFromTargets(Project.docTargets(props.project, props.docName)),
     ...TargetsSchema.fieldToTypeMap(props.project.targets?.schema || []),
   };
 

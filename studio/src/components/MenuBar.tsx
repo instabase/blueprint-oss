@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as Targets from 'studio/foundation/targets';
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 
 import {Value as TheModalContext} from 'studio/context/ModalContext';
 import {Value as TheSessionContext} from 'studio/context/SessionContext';
@@ -13,7 +13,7 @@ import BlueprintSettingsDialog from 'studio/components/BlueprintSettingsDialog';
 import StudioSettingsDialog from 'studio/components/StudioSettingsDialog';
 import Menu, {Props as MenuProps} from 'studio/components/Menu';
 
-import {rawLoadResponse, loadRecordNames} from 'studio/async/loadRecords';
+import {rawLoadResponse, loadDocNames} from 'studio/async/loadDocs';
 import loadDoc from 'studio/async/loadDoc';
 
 import * as Project from 'studio/state/project';
@@ -141,12 +141,12 @@ export default function MenuBar({
 
   /*
   const deleteTargetsForThisDocCB = React.useCallback(() => {
-    const recordName = project?.selectedRecordName;
+    const docName = project?.selectedDocName;
 
-    if (recordName != undefined) {
-      actionContext.dispatchAction({type: 'DeleteTargetsForDoc', recordName});
+    if (docName != undefined) {
+      actionContext.dispatchAction({type: 'DeleteTargetsForDoc', docName});
     }
-  }, [actionContext, project?.selectedRecordName]);
+  }, [actionContext, project?.selectedDocName]);
   */
 
   // Results
@@ -200,9 +200,9 @@ export default function MenuBar({
             const newTargets = {
               ...oldTargets,
               doc_targets: oldTargets.doc_targets.map(
-                recordTargets => ({
-                  ...recordTargets,
-                  assignments: recordTargets.assignments.filter(
+                docTargets => ({
+                  ...docTargets,
+                  assignments: docTargets.assignments.filter(
                     ({field, value}) => (
                       value.text
                     )
@@ -335,10 +335,10 @@ export default function MenuBar({
               type: 'ActionRow',
               action: (
                 () => {
-                  if (project && project.selectedRecordName) {
+                  if (project && project.selectedDocName) {
                     loadDoc(
                       project.samplesPath,
-                      project.selectedRecordName,
+                      project.selectedDocName,
                       Project.blueprintSettings(project),
                       sessionContext,
                     ).then(
@@ -352,7 +352,7 @@ export default function MenuBar({
                   }
                 }
               ),
-              disabled: !project?.selectedRecordName,
+              disabled: !project?.selectedDocName,
             },
           ],
           onActionExecute: closeAllMenus,
@@ -488,7 +488,7 @@ export default function MenuBar({
               ),
             },
             {
-              text: 'Download load_records response',
+              text: 'Download load_docs response',
               disabled: !project,
               type: 'ActionRow',
               action: (
@@ -498,7 +498,7 @@ export default function MenuBar({
                       response => {
                         saveData(
                           JSON.stringify(response),
-                          'load_records_response.json',
+                          'load_docs_response.json',
                         );
                       }
                     );

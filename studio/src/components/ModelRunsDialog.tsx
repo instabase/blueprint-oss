@@ -12,7 +12,7 @@ import Dialog from 'studio/components/Dialog';
 import Dropdown from 'studio/components/Dropdown';
 import AppModalBackdrop from 'studio/components/AppModalBackdrop';
 
-import * as RecordRun from 'studio/state/recordRun';
+import * as DocRun from 'studio/state/docRun';
 import * as ModelRun from 'studio/state/modelRun';
 import * as Project from 'studio/state/project';
 

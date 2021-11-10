@@ -3,7 +3,7 @@ import DragSelectionArea from 'studio/components/DragSelectionArea';
 import ActionContext from 'studio/context/ActionContext';
 import {X} from 'studio/components/StockSVGs';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Entity from 'studio/foundation/entity';
 import * as Doc from 'studio/foundation/doc';
 import * as TargetValue from 'studio/foundation/targetValue';
@@ -15,7 +15,7 @@ import {isNonemptyArray} from 'studio/util/types';
 
 type Props = {
   project: Project.t;
-  recordName: string;
+  docName: string;
   doc: Doc.t | undefined;
   children: React.ReactNode;
 };
@@ -29,21 +29,21 @@ export default function TargetPicker(props: Props) {
   const enabled = Project.targetPickingEnabled(props.project) &&
                   props.doc != undefined;
 
-  const recordTargets =
-    Project.recordTargets(
+  const docTargets =
+    Project.docTargets(
       props.project,
-      props.recordName);
+      props.docName);
 
   const currentTargetValue: TargetValue.t | undefined =
-    recordTargets && field
-      ? RecordTargets.value(recordTargets, field)
+    docTargets && field
+      ? DocTargets.value(docTargets, field)
       : undefined;
 
   const finalizeSelection = React.useCallback(
     (targetValue: TargetValue.t | undefined) => {
       actionContext.dispatchAction({
         type: 'SetTargetValue',
-        recordName: props.recordName,
+        docName: props.docName,
 
         // XXX ... and the next line.
         field: field as string,
@@ -51,7 +51,7 @@ export default function TargetPicker(props: Props) {
       });
     },
     [field,
-     props.recordName,
+     props.docName,
      props.doc,
      actionContext],
   );

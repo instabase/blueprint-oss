@@ -2,7 +2,7 @@ import React from 'react';
 import memo from 'memoizee';
 
 import * as BBox from 'studio/foundation/bbox';
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as TargetValue from 'studio/foundation/targetValue';
 import * as TargetWord from 'studio/foundation/targetWord';
 import * as Word from 'studio/foundation/word';
@@ -19,8 +19,8 @@ import './TargetValuesOverlay.css';
 
 type Props = {
   project: Project.t;
-  recordName: string;
-  targets: RecordTargets.t;
+  docName: string;
+  targets: DocTargets.t;
   targetValuesChecked: boolean;
 };
 
@@ -35,7 +35,7 @@ export default function TargetsOverlay(props: Props) {
                   .filter(({field, value}) => (fieldsToShow.includes(field)))
                   .map(({field, value}) =>
       <TargetWords
-        key={props.recordName + field}
+        key={props.docName + field}
         field={field}
         value={value}
       />)
@@ -73,9 +73,9 @@ export const fieldsForWhichToShowTargetValues = memo(
   function(project: Project.t, checkboxChecked: boolean): string[] {
     switch (project.selectionMode.type) {
       case 'None':
-        const recordTargets = Project.selectedRecordTargets(project);
-        if (recordTargets && checkboxChecked) {
-          return RecordTargets.fields(recordTargets);
+        const docTargets = Project.selectedDocTargets(project);
+        if (docTargets && checkboxChecked) {
+          return DocTargets.fields(docTargets);
         } else {
           return [];
         }

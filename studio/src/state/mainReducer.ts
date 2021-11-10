@@ -1,6 +1,6 @@
 import {v4 as uuidv4} from 'uuid';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Entity from 'studio/foundation/entity';
 import * as TargetAssignment from 'studio/foundation/targetAssignment';
 import * as TargetValue from 'studio/foundation/targetValue';
@@ -14,7 +14,7 @@ import * as PatternNode from 'studio/blueprint/patternNode';
 import * as PickBestNode from 'studio/blueprint/pickBestNode';
 import * as Rule from 'studio/blueprint/rule';
 
-import * as RecordRun from 'studio/state/recordRun';
+import * as DocRun from 'studio/state/docRun';
 import * as ModelRun from 'studio/state/modelRun';
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
@@ -31,8 +31,8 @@ export type Action = {
 } | {
   type: 'Redo';
 } | {
-  type: 'SetSelectedRecordName';
-  recordName: string;
+  type: 'SetSelectedDocName';
+  docName: string;
 } | {
   type: 'SetSelectedNode';
   path: Model.Path;
@@ -42,10 +42,10 @@ export type Action = {
   rule: Rule.t;
 } | {
   type: 'DeleteTargetsForDoc';
-  recordName: string;
+  docName: string;
 } | {
   type: 'AddTargetsToDoc';
-  recordName: string;
+  docName: string;
 } | {
   type: 'ImportTargets';
   targets: Targets.t;
@@ -60,7 +60,7 @@ export type Action = {
   field: string | undefined;
 } | {
   type: 'SetTargetValue',
-  recordName: string;
+  docName: string;
   field: string;
   value: TargetValue.t | undefined;
 } | {
@@ -128,7 +128,7 @@ export type Action = {
 } | {
   type: 'ScheduleModelRun';
   modelIndex: number;
-  recordNames: string[];
+  docNames: string[];
   pin: boolean;
 } | {
   type: 'CancelModelRun';
@@ -139,9 +139,9 @@ export type Action = {
   keep: boolean;
   pin: boolean;
 } | {
-  type: 'UpdateModelRecordRun';
+  type: 'UpdateModelDocRun';
   modelIndex: number;
-  recordRun: RecordRun.t;
+  docRun: DocRun.t;
 } | {
   type: 'ChangeSettings';
   changes: Partial<Settings.t>;
@@ -196,14 +196,14 @@ function Redo(project: Project.t): Project.t {
   return setModelIndex(project, project.currentModelIndex + 1);
 }
 
-function SetSelectedRecordName(
+function SetSelectedDocName(
   project: Project.t,
-  recordName: string):
+  docName: string):
     Project.t
 {
   return {
     ...project,
-    selectedRecordName: recordName,
+    selectedDocName: docName,
   };
 }
 
@@ -247,7 +247,7 @@ function SetSelectedRule(
 
 function AddTargetsToDoc(
   project: Project.t,
-  recordName: string):
+  docName: string):
     Project.t
 {
   return {
@@ -256,7 +256,7 @@ function AddTargetsToDoc(
       ...project.targets,
       doc_targets: [
         ...project.targets.doc_targets,
-        RecordTargets.build(recordName),
+        DocTargets.build(docName),
       ],
     },
   };
@@ -345,7 +345,7 @@ function DeleteFieldFromTargetsSchema(
 
 function DeleteTargetsForDoc(
   project: Project.t,
-  recordName: string):
+  docName: string):
     Project.t
 {
   return {
@@ -353,7 +353,7 @@ function DeleteTargetsForDoc(
     targets: {
       ...project.targets,
       doc_targets: project.targets.doc_targets.filter(
-        recordTargets => recordTargets.doc_name != recordName
+        docTargets => docTargets.doc_name != docName
       ),
     },
   };
@@ -377,13 +377,13 @@ function SetSelectedField(
 
 function SetTargetValue(
   project: Project.t,
-  recordName: string,
+  docName: string,
   field: string,
   value: TargetValue.t | undefined):
     Project.t
 {
-  if (Project.recordTargets(project, recordName) == undefined) {
-    project = AddTargetsToDoc(project, recordName);
+  if (Project.docTargets(project, docName) == undefined) {
+    project = AddTargetsToDoc(project, docName);
   }
 
   function newAssignments(
@@ -414,8 +414,8 @@ function SetTargetValue(
     targets: {
       ...project.targets,
       doc_targets: project.targets.doc_targets.map(
-        (entry: RecordTargets.t) => {
-          if (entry.doc_name == recordName) {
+        (entry: DocTargets.t) => {
+          if (entry.doc_name == docName) {
             return {
               ...entry,
               assignments: newAssignments(entry.assignments),
@@ -786,7 +786,7 @@ function ReplaceRule(
 function ScheduleModelRun(
   project: Project.t,
   modelIndex: number,
-  recordNames: string[],
+  docNames: string[],
   pin: boolean,
 ):
     Project.t
@@ -795,7 +795,7 @@ function ScheduleModelRun(
 
   const modelRun = ModelRun.build(
     modelIndex,
-    recordNames.map(RecordRun.build),
+    docNames.map(DocRun.build),
     keep,
     pin,
   );
@@ -832,16 +832,16 @@ function CancelModelRun(
         if (modelRun.uuid == uuid) {
           return {
             ...modelRun,
-            recordRuns: modelRun.recordRuns.map(
-              recordRun => {
-                if (RecordRun.isPending(recordRun)) {
+            docRuns: modelRun.docRuns.map(
+              docRun => {
+                if (DocRun.isPending(docRun)) {
                   return {
-                    type: 'CanceledRecordRun',
-                    uuid: recordRun.uuid,
-                    recordName: recordRun.recordName,
+                    type: 'CanceledDocRun',
+                    uuid: docRun.uuid,
+                    docName: docRun.docName,
                   };
                 } else {
-                  return recordRun;
+                  return docRun;
                 }
               }
             ),
@@ -875,10 +875,10 @@ function UpdateModelRun(
   };
 }
 
-function UpdateModelRecordRun(
+function UpdateModelDocRun(
   project: Project.t,
   modelIndex: number,
-  recordRun: RecordRun.t):
+  docRun: DocRun.t):
     Project.t
 {
   // Push results if we find the right doc run UUID.
@@ -888,14 +888,14 @@ function UpdateModelRecordRun(
       if (modelRun.modelIndex == modelIndex) {
         return {
           ...modelRun,
-          recordRuns: modelRun.recordRuns.map(
-            oldRecordRun => {
-              if (oldRecordRun.uuid == recordRun.uuid &&
-                  oldRecordRun.type != 'CanceledRecordRun')
+          docRuns: modelRun.docRuns.map(
+            oldDocRun => {
+              if (oldDocRun.uuid == docRun.uuid &&
+                  oldDocRun.type != 'CanceledDocRun')
               {
-                return recordRun;
+                return docRun;
               } else {
-                return oldRecordRun;
+                return oldDocRun;
               }
             }
           ),
@@ -966,20 +966,20 @@ export default function mainReducer(
       return Undo(project);
     case 'Redo':
       return Redo(project);
-    case 'SetSelectedRecordName':
-      return SetSelectedRecordName(project, action.recordName);
+    case 'SetSelectedDocName':
+      return SetSelectedDocName(project, action.docName);
     case 'SetSelectedNode':
       return SetSelectedNode(project, action.path);
     case 'SetSelectedRule':
       return SetSelectedRule(project, action.path, action.rule);
     case 'AddTargetsToDoc':
-      return AddTargetsToDoc(project, action.recordName);
+      return AddTargetsToDoc(project, action.docName);
     case 'DeleteTargetsForDoc':
-      return DeleteTargetsForDoc(project, action.recordName);
+      return DeleteTargetsForDoc(project, action.docName);
     case 'SetSelectedField':
       return SetSelectedField(project, action.field);
     case 'SetTargetValue':
-      return SetTargetValue(project, action.recordName, action.field, action.value);
+      return SetTargetValue(project, action.docName, action.field, action.value);
     case 'ClearModel':
       return ClearModel(project);
     case 'PlaceIntoMerge':
@@ -1010,13 +1010,13 @@ export default function mainReducer(
     case 'ReplaceRule':
       return ReplaceRule(project, action.node, action.path, action.oldRule, action.newRule);
     case 'ScheduleModelRun':
-      return ScheduleModelRun(project, action.modelIndex, action.recordNames, action.pin);
+      return ScheduleModelRun(project, action.modelIndex, action.docNames, action.pin);
     case 'CancelModelRun':
       return CancelModelRun(project, action.uuid);
     case 'UpdateModelRun':
       return UpdateModelRun(project, action.uuid, action.keep, action.pin);
-    case 'UpdateModelRecordRun':
-      return UpdateModelRecordRun(project, action.modelIndex, action.recordRun);
+    case 'UpdateModelDocRun':
+      return UpdateModelDocRun(project, action.modelIndex, action.docRun);
     case 'ChangeSettings':
       return ChangeSettings(project, action.changes);
     case 'ToggleAnnotationMode':

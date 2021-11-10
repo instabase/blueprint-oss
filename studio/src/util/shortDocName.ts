@@ -1,5 +1,5 @@
-export default function shortRecordName(fullRecordName: string): string {
-  return lastPathComponent(fullRecordName);
+export default function shortDocName(fullDocName: string): string {
+  return lastPathComponent(fullDocName);
 }
 
 function lastPathComponent(path: string): string {

@@ -5,7 +5,7 @@ import useResource from 'studio/hooks/useResource';
 
 import * as Transform from 'studio/util/zoomAndPanTransform';
 
-import {Layout} from 'studio/async/loadRecords';
+import {Layout} from 'studio/async/loadDocs';
 import loadImage from 'studio/async/loadImage';
 
 type Props = {

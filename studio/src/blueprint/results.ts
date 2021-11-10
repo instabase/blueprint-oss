@@ -1,6 +1,6 @@
 import memo from 'memoizee';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Entity from 'studio/foundation/entity';
 import * as Extraction from 'studio/foundation/extraction';
 
@@ -9,7 +9,7 @@ import * as Scoring from 'studio/blueprint/scoring';
 
 import {UUID, isNotUndefined} from 'studio/util/types';
 
-export type RecordRuntimeInfo = {
+export type DocRuntimeInfo = {
   loading_ms: number | undefined;
   binding_ms: number | undefined;
   pumping_ms: number | undefined;
@@ -27,7 +27,7 @@ export type ResultsNode = {
 
 export type t = {
   root: ResultsNode | undefined;
-  runtime_info: RecordRuntimeInfo;
+  runtime_info: DocRuntimeInfo;
 };
 
 export const byNode = memo(

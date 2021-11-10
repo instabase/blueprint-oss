@@ -8,17 +8,17 @@ import * as Results from 'studio/blueprint/results';
 
 import runBPModel from 'studio/async/runBPModel';
 
-import * as RecordRun from 'studio/state/recordRun';
+import * as DocRun from 'studio/state/docRun';
 import * as ModelRun from 'studio/state/modelRun';
 import * as Project from 'studio/state/project';
 
 import {UUID} from 'studio/util/types';
 import assert from 'studio/util/assert';
 
-type StartedRecordRunUUID = UUID;
+type StartedDocRunUUID = UUID;
 type State = {
-  startedRecordRuns: Set<StartedRecordRunUUID>;
-  numActiveRecordRuns: number;
+  startedDocRuns: Set<StartedDocRunUUID>;
+  numActiveDocRuns: number;
 }
 
 export default function useModelRunner(
@@ -27,26 +27,26 @@ export default function useModelRunner(
   actionContext: TheActionContext,
 ) {
   const stateRef = React.useRef<State>({
-    startedRecordRuns: new Set(),
-    numActiveRecordRuns: 0,
+    startedDocRuns: new Set(),
+    numActiveDocRuns: 0,
   });
   const state = stateRef.current;
 
   React.useEffect(() => {
     if (project != undefined && state != undefined) {
       for (let modelRun of project.modelRuns) {
-        if (state.numActiveRecordRuns >= project.settings.numSimultaneousModelRuns) {
+        if (state.numActiveDocRuns >= project.settings.numSimultaneousModelRuns) {
           break;
         }
 
-        for (let recordRun of ModelRun.pendingRecordRuns(modelRun)) {
-          if (state.numActiveRecordRuns >= project.settings.numSimultaneousModelRuns) {
+        for (let docRun of ModelRun.pendingDocRuns(modelRun)) {
+          if (state.numActiveDocRuns >= project.settings.numSimultaneousModelRuns) {
             break;
           }
 
-          if (!state.startedRecordRuns.has(recordRun.uuid)) {
-            state.numActiveRecordRuns++;
-            start(modelRun, recordRun, project,
+          if (!state.startedDocRuns.has(docRun.uuid)) {
+            state.numActiveDocRuns++;
+            start(modelRun, docRun, project,
                   sessionContext, actionContext, state);
           }
         }
@@ -63,75 +63,75 @@ export default function useModelRunner(
 
 async function start(
   modelRun: ModelRun.t,
-  recordRun: RecordRun.PendingRecordRun,
+  docRun: DocRun.PendingDocRun,
   project: Project.t,
   sessionContext: TheSessionContext,
   actionContext: TheActionContext,
   state: State)
 {
-  console.info('Starting model doc run', modelRun, recordRun);
+  console.info('Starting model doc run', modelRun, docRun);
 
-  if (state.startedRecordRuns.has(recordRun.uuid)) {
+  if (state.startedDocRuns.has(docRun.uuid)) {
     console.warn(
       'Attempted to start doc run multiple times; ignoring',
-      recordRun, project, sessionContext, actionContext, state);
+      docRun, project, sessionContext, actionContext, state);
     return;
   }
 
-  state.startedRecordRuns.add(recordRun.uuid);
+  state.startedDocRuns.add(docRun.uuid);
 
-  const recordName = recordRun.recordName;
+  const docName = docRun.docName;
   const modelIndex = modelRun.modelIndex;
   const model = project.modelStack[modelIndex];
   assert(model != undefined);
 
   try {
-    console.info('Running model', recordName);
+    console.info('Running model', docName);
 
     actionContext.dispatchAction({
-      type: 'UpdateModelRecordRun',
+      type: 'UpdateModelDocRun',
       modelIndex,
-      recordRun: {
-        type: 'ActiveRecordRun',
-        uuid: recordRun.uuid,
-        recordName: recordRun.recordName,
+      docRun: {
+        type: 'ActiveDocRun',
+        uuid: docRun.uuid,
+        docName: docRun.docName,
       },
     });
 
     const results = await runBPModel(
       project.samplesPath,
-      recordName,
+      docName,
       model,
       Project.blueprintSettings(project),
       sessionContext,
     );
 
-    console.info('Done running model', recordName);
+    console.info('Done running model', docName);
 
     actionContext.dispatchAction({
-      type: 'UpdateModelRecordRun',
+      type: 'UpdateModelDocRun',
       modelIndex,
-      recordRun: {
-        type: 'FinishedRecordRun',
-        uuid: recordRun.uuid,
-        recordName: recordRun.recordName,
+      docRun: {
+        type: 'FinishedDocRun',
+        uuid: docRun.uuid,
+        docName: docRun.docName,
         results,
       },
     });
   } catch (error) {
-    console.error('Error running model', recordName, error);
+    console.error('Error running model', docName, error);
 
     actionContext.dispatchAction({
-      type: 'UpdateModelRecordRun',
+      type: 'UpdateModelDocRun',
       modelIndex,
-      recordRun: {
-        type: 'FailedRecordRun',
-        uuid: recordRun.uuid,
-        recordName: recordRun.recordName,
+      docRun: {
+        type: 'FailedDocRun',
+        uuid: docRun.uuid,
+        docName: docRun.docName,
         error: error.toString(),
       },
     });
   } finally {
-    state.numActiveRecordRuns--;
+    state.numActiveDocRuns--;
   }
 }

@@ -13,32 +13,32 @@ type Props = {
 export default function DocListPane({project}: Props) {
   const actionContext = React.useContext(ActionContext);
 
-  const recordNamesResource = useResource(
-    Project.activeRecordNames(project)
+  const docNamesResource = useResource(
+    Project.activeDocNames(project)
   );
 
   // Janky, we could show "loading" better than this.
-  const recordNames =
-    recordNamesResource.status == 'Done' ?
-      recordNamesResource.value : [];
+  const docNames =
+    docNamesResource.status == 'Done' ?
+      docNamesResource.value : [];
 
-  const selectedRecordName = project.selectedRecordName;
+  const selectedDocName = project.selectedDocName;
   const model = Project.model(project);
   
   return (
-    <DocListView project={project} recordNames={recordNames}>
+    <DocListView project={project} docNames={docNames}>
       <div className="CornerButtons _high">
         <button
-          disabled={!selectedRecordName}
+          disabled={!selectedDocName}
           onClick={
             event => {
               event.stopPropagation();
               event.preventDefault();
-              assert(selectedRecordName);
+              assert(selectedDocName);
               actionContext.dispatchAction({
                 type: 'ScheduleModelRun',
                 modelIndex: project.currentModelIndex,
-                recordNames: [selectedRecordName],
+                docNames: [selectedDocName],
                 pin: false,
               });
             }
@@ -52,7 +52,7 @@ export default function DocListPane({project}: Props) {
           actionContext.dispatchAction({
             type: 'ScheduleModelRun',
             modelIndex: project.currentModelIndex,
-            recordNames,
+            docNames,
             pin: true,
           });
         }}>

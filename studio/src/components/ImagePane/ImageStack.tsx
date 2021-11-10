@@ -4,7 +4,7 @@ import Image from 'studio/components/ImagePane/Image';
 
 import * as Transform from 'studio/util/zoomAndPanTransform';
 
-import {Layouts} from 'studio/async/loadRecords';
+import {Layouts} from 'studio/async/loadDocs';
 
 import './ImageStack.css';
 

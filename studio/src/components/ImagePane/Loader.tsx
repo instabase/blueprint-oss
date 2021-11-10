@@ -11,7 +11,7 @@ import * as Resource from 'studio/state/resource';
 
 import useResource from 'studio/hooks/useResource';
 
-import {loadLayouts} from 'studio/async/loadRecords';
+import {loadLayouts} from 'studio/async/loadDocs';
 import loadImage from 'studio/async/loadImage';
 import loadDoc from 'studio/async/loadDoc';
 
@@ -25,27 +25,27 @@ type Props = {
 export default function Loader(props: Props) {
   const sessionContext = React.useContext(SessionContext);
 
-  const recordName = props.project.selectedRecordName;
+  const docName = props.project.selectedDocName;
 
-  const layoutsPromise = recordName
+  const layoutsPromise = docName
     ? loadLayouts(
         props.project.samplesPath,
-        recordName,
+        docName,
       )
     : undefined;
   const layoutsResource = useResource(layoutsPromise);
 
-  const docPromise = recordName
+  const docPromise = docName
     ? loadDoc(
         props.project.samplesPath,
-        recordName,
+        docName,
         Project.blueprintSettings(props.project),
         sessionContext,
       )
     : undefined;
   const docResource = useResource(docPromise);
 
-  if (!recordName) {
+  if (!docName) {
     return <CenteredText>Select a document</CenteredText>;
   } else if (layoutsResource.status == 'NotAvailable')
   {
@@ -82,7 +82,7 @@ export default function Loader(props: Props) {
         <Pane
           project={props.project}
           extraction={props.extraction}
-          recordName={recordName}
+          docName={docName}
           doc={Resource.finished(docResource)}
           layouts={layoutsResource.value}
         />

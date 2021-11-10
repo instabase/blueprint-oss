@@ -5,31 +5,31 @@ import * as Project from 'studio/state/project';
 
 import loadDoc from 'studio/async/loadDoc';
 import loadImage from 'studio/async/loadImage';
-import {loadLayouts} from 'studio/async/loadRecords';
+import {loadLayouts} from 'studio/async/loadDocs';
 
-export function preloadResourcesForSelectedRecordName(
+export function preloadResourcesForSelectedDocName(
   project: Project.t,
   sessionContext: TheSessionContext)
 {
-  const recordName = project.selectedRecordName;
-  if (recordName != undefined) {
-    preloadResourcesForRecord(
+  const docName = project.selectedDocName;
+  if (docName != undefined) {
+    preloadResourcesForDoc(
       project,
-      recordName,
+      docName,
       sessionContext,
     );
   }
 }
 
-export async function preloadResourcesForRecord(
+export async function preloadResourcesForDoc(
   project: Project.t,
-  recordName: string,
+  docName: string,
   sessionContext: TheSessionContext)
 {
   try {
     await loadDoc(
       project.samplesPath,
-      recordName,
+      docName,
       Project.blueprintSettings(project),
       sessionContext,
     );
@@ -37,7 +37,7 @@ export async function preloadResourcesForRecord(
     const layouts = Object.values(
       await loadLayouts(
         project.samplesPath,
-        recordName,
+        docName,
       )
     );
 
@@ -51,7 +51,7 @@ export async function preloadResourcesForRecord(
   } catch (e) {
     console.error(
       'Preloading resources failed',
-      project, recordName, e,
+      project, docName, e,
     );
   }
 }

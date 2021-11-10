@@ -8,19 +8,19 @@ type Props = {
 };
 
 export default function DocListPane({project}: Props) {
-  const recordNamesResource = useResource(
-    Project.activeRecordNames(project)
+  const docNamesResource = useResource(
+    Project.activeDocNames(project)
   );
 
   // Janky, we could show "loading" better than this.
-  const recordNames =
-    recordNamesResource.status == 'Done' ?
-      recordNamesResource.value : [];
+  const docNames =
+    docNamesResource.status == 'Done' ?
+      docNamesResource.value : [];
 
   return (
     <DocListView
       project={project}
-      recordNames={recordNames}
+      docNames={docNames}
     />
   );
 }
