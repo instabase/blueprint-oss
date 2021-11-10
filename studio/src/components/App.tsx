@@ -2,7 +2,7 @@ import React from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
 
 import ModalContext from 'studio/context/ModalContext';
-import SessionContext from 'studio/context/SessionContext';
+import SessionContext, {Value as TheSessionContext} from 'studio/context/SessionContext';
 import ActionContext from 'studio/context/ActionContext';
 import ProjectContext from 'studio/context/ProjectContext';
 
@@ -12,7 +12,6 @@ import MenuBar from 'studio/components/MenuBar';
 
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
-import * as ServerInfo from 'studio/state/serverInfo';
 import mainReducer from 'studio/state/mainReducer';
 
 import useProject from 'studio/hooks/useProject';
@@ -73,29 +72,16 @@ export default function App() {
     }
   }, [projectPath]);
 
-  const [serverInfo, setServerInfo] =
-    React.useState<ServerInfo.t | undefined>();
-
   const sessionContext = React.useMemo(() => ({
     uuid: sessionUUID,
     backendURL: BACKEND_URL,
-    serverInfo,
     projectPath,
     setProjectPath,
   }), [
     sessionUUID,
-    serverInfo,
     projectPath,
     setProjectPath,
   ]);
-
-  React.useEffect(() => {
-    ServerInfo.get(BACKEND_URL).then(
-      (serverInfo: ServerInfo.t) => {
-        setServerInfo(serverInfo);
-      }
-    );
-  }, [setServerInfo]);
 
   // Project context
   // ---------------
@@ -138,20 +124,10 @@ export default function App() {
         sessionContext={sessionContext}
         actionContext={actionContext}
       />
-      {!sessionContext.serverInfo &&
-        <div className="CenteredStack">
-          <div className="CenteredText">
-            Loading server info. If this takes a long time,<br/>
-            check the browser dev tools log for errors.
-          </div>
-        </div>
-      }
-      {sessionContext.serverInfo &&
-        <MainViewLoader
-          projectResource={projectResource}
-          recentProjectPaths={recentProjectPaths}
-        />
-      }
+      <MainViewLoader
+        projectResource={projectResource}
+        recentProjectPaths={recentProjectPaths}
+      />
       <StatusBar
         autosaverState={autosaverState}
       />
@@ -263,6 +239,21 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
           event => {
             event.stopPropagation();
             event.preventDefault();
+            console.log('Beginning create new project interaction');
+
+            alert('Select your project\'s root folder. ' +
+                  'This folder should already have in it two subdirectories: ' +
+                  'one containing your image samples, and ' +
+                  'one containing your OCR files.\n\n' +
+                  'Your project file will be called project.json. ' +
+                  'It is not possible to pick another name. ' +
+                  'As a consequence, you cannot have multiple projects ' +
+                  'working with the same image/OCR samples. ' +
+                  'To do so, make a copy of your sample data.');
+            // @ts-ignore
+            window.showDirectoryPicker().then(
+              (handle: any) => runNewProjectModalInteraction(
+                handle, sessionContext));
           }
         }
       >
@@ -302,4 +293,62 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
       </>
     }
   </div>;
+}
+
+async function runNewProjectModalInteraction(
+    dirHandle: any,
+    sessionContext: TheSessionContext)
+{
+  // @ts-ignore
+  if (!dirHandle) {
+    console.log('No dir handle, returning');
+    return;
+  }
+  console.log('Got directory from user', dirHandle.entries());
+
+  const entries = new Map<any, any>();
+  for await (let [k, v] of dirHandle.entries()) {
+    entries.set(k, v);
+  }
+  console.log('Got contents of directory', entries);
+
+  const projectFileName = 'project.json';
+  if (entries.has(projectFileName)) {
+    const error = 'Error: Chosen directory already has a project.json file';
+    console.log(error);
+    alert(error);
+    return;
+  }
+
+  const imagesDirName = prompt(
+    'Type the name of the subdirectory that has your image files.',
+    'img')
+  if (!imagesDirName) {
+    console.log('User did not provide an images dir name, aborting');
+    return;
+  }
+  if (entries.get(imagesDirName)?.kind != 'directory') {
+    const error = 'Error: Images directory not found';
+    console.log(error);
+    alert(error);
+    return;
+  }
+  console.log('Got images dir name', imagesDirName);
+
+  const ocrDirName = prompt(
+    'Type the name of the subdirectory that has your OCR files.',
+    'ocr')
+  if (!ocrDirName) {
+    console.log('User did not provide an OCR dir name, aborting');
+    return;
+  }
+  if (entries.get(ocrDirName)?.kind != 'directory') {
+    const error = 'Error: OCR directory not found';
+    console.log(error);
+    alert(error);
+    return;
+  }
+  console.log('Got OCR dir name', ocrDirName);
+
+
 }
