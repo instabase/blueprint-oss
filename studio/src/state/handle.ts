@@ -1,5 +1,6 @@
 type FileSystemWritableFileStream = {
   write: (s: string) => Promise<void>;
+  close: () => Promise<void>;
 };
 
 type FileHandle = {
@@ -9,5 +10,5 @@ type FileHandle = {
 
 export type t = {
   entries: () => any;
-  getFileHandle: (s: string) => Promise<FileHandle>;
+  getFileHandle: (s: string, opts?: any) => Promise<FileHandle>;
 };

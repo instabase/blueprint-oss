@@ -296,5 +296,10 @@ async function runNewProjectModalInteraction(
   }
   console.log('Got OCR dir name', ocrDirName);
 
+  await handle.getFileHandle('project.json', {create: true});
+  await saveProject(handle, Project.build());
+
+  console.log('Done building new project, setting session handle...');
+
   sessionContext.setHandle(handle);
 }

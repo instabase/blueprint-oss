@@ -30,6 +30,7 @@ export async function loadProject(
   const fileHandle = await handle.getFileHandle('project.json');
   const file = await fileHandle.getFile();
   const text = await file.text();
+  console.log('Finished reading project contents', handle, fileHandle, file, text);
   const project: Project.t = JSON.parse(text);
   return validate(project);
 }
@@ -63,10 +64,17 @@ export async function saveProject(
   project: Project.t):
     Promise<SaveProjectResult>
 {
+  console.log('Saving', JSON.stringify(project));
   return handle.getFileHandle('project.json').then(
     fileHandle => fileHandle.createWritable()
   ).then(
-    writableStream => writableStream.write(JSON.stringify(project))
+    writableStream => (
+      writableStream.write(JSON.stringify(project)).then(
+        () => writableStream
+      )
+    )
+  ).then(
+    writableStream => writableStream.close()
   ).then(
     (): SaveProjectDone => {
       // console.debug('Save project done', handle, project);
