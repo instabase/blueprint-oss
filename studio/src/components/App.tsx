@@ -245,6 +245,10 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
                   'This folder should already have in it two subdirectories: ' +
                   'one containing your image samples, and ' +
                   'one containing your OCR files.\n\n' +
+                  'The files must be named as follows: ' +
+                  'for every image foo.jpg (or foo.png, etc.), ' +
+                  'there must be a corresponding OCR file called ' +
+                  'foo.jpg.json (or foo.png.json, etc.).\n\n' +
                   'Your project file will be called project.json. ' +
                   'It is not possible to pick another name. ' +
                   'As a consequence, you cannot have multiple projects ' +
