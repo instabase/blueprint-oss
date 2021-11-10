@@ -17,7 +17,6 @@ import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
 
 import shortDocName from 'studio/util/shortDocName';
-import {preloadResourcesForDoc} from 'studio/util/preloadDocResources';
 import {UUID} from 'studio/util/types';
 import {booleanSort, reversedNumericalSort, stringSort} from 'studio/util/sorting';
 import {Nonempty} from 'studio/util/types';
@@ -105,16 +104,6 @@ function spec(
         type: 'SetSelectedDocName',
         docName: row.docName,
       });
-
-      for (let sibling of [prevRow, nextRow]) {
-        if (sibling != undefined) {
-          preloadResourcesForDoc(
-            project,
-            sibling.docName,
-            sessionContext,
-          );
-        }
-      }
     },
     prevRowKeyboardShortcut: {
       key: 'D',
