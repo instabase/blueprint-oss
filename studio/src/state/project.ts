@@ -20,6 +20,7 @@ import * as ModelRun from 'studio/state/modelRun';
 import * as NodeDocTargets from 'studio/state/nodeDocTargets';
 import * as Resource from 'studio/state/resource';
 import * as Settings from 'studio/state/settings';
+import * as Handle from 'studio/state/handle';
 
 import * as ExtractionAndTargets from 'studio/accuracy/extractionAndTargets';
 
@@ -35,9 +36,6 @@ export const FORMAT_VERSION = 7;
 export type t = {
   formatVersion: number;
   uuid: UUID;
-
-  imagesDirName: string;
-  ocrDirName: string;
 
   selectedDocName: string | undefined;
 
@@ -63,14 +61,11 @@ export type SelectionMode = {
   ruleUUID: UUID;
 };
 
-export function build(
-  samplesPath: string,
-): t {
+export function build(): t {
   return {
     formatVersion: FORMAT_VERSION,
     uuid: uuidv4(),
 
-    samplesPath,
     selectedDocName: undefined,
 
     targets: Targets.build(),
@@ -362,8 +357,8 @@ export function targetValueForSelectedDocName(
 }
 
 export const activeDocNames = memo(
-  async function(project: t): Promise<string[]> {
-    const docNames = await loadDocNames(project.samplesPath);
+  async function(handle: Handle.t, project: t): Promise<string[]> {
+    const docNames = await loadDocNames(handle);
     return docNames.filter(
       docName => {
         const targets = docTargets(project, docName);

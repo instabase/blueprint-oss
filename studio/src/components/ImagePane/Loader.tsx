@@ -8,6 +8,7 @@ import SessionContext from 'studio/context/SessionContext';
 
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
+import * as Handle from 'studio/state/handle';
 
 import useResource from 'studio/hooks/useResource';
 
@@ -29,7 +30,7 @@ export default function Loader(props: Props) {
 
   const layoutsPromise = docName
     ? loadLayouts(
-        props.project.samplesPath,
+        sessionContext.handle as Handle.t,
         docName,
       )
     : undefined;
@@ -37,7 +38,7 @@ export default function Loader(props: Props) {
 
   const docPromise = docName
     ? loadDoc(
-        props.project.samplesPath,
+        sessionContext.handle as Handle.t,
         docName,
         Project.blueprintSettings(props.project),
         sessionContext,

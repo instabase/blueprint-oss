@@ -1,5 +1,7 @@
 import memo from 'memoizee';
 
+import * as Handle from 'studio/state/handle';
+
 import {hasOwnProperty, isArray} from 'studio/util/types';
 
 type DocName = string;
@@ -45,7 +47,7 @@ function validateResponse(response: Response): void {
   }
 }
 
-export async function rawLoadResponse(samplesPath: string): Promise<Response> {
+export async function rawLoadResponse(handle: Handle.t): Promise<Response> {
   const response = await fetch(
     'load-all-docs'
   );
@@ -60,37 +62,37 @@ export async function rawLoadResponse(samplesPath: string): Promise<Response> {
 export const loadResponse = memo(rawLoadResponse);
 
 export const loadDocNames = memo(
-  async function(samplesPath: string): Promise<string[]> {
-    const response = await loadResponse(samplesPath);
+  async function(handle: Handle.t): Promise<string[]> {
+    const response = await loadResponse(handle);
     return [...Object.keys(response.docs)];
   }
 );
 
 export const loadDocBlob = memo(
-  async function(samplesPath: string, docName: string): Promise<DocBlob> {
-    const response = await loadResponse(samplesPath);
+  async function(handle: Handle.t, docName: string): Promise<DocBlob> {
+    const response = await loadResponse(handle);
     return response.docs[docName];
   }
 );
 
 export const loadWordPolys = memo(
   async function(
-    samplesPath: string,
+    handle: Handle.t,
     docName: string,
   ): Promise<WordPolyDict[]>
   {
-    const doc = await loadDocBlob(samplesPath, docName);
+    const doc = await loadDocBlob(handle, docName);
     return doc.lines.flat();
   }
 );
 
 export const loadLayouts = memo(
   async function(
-    samplesPath: string,
+    handle: Handle.t,
     docName: string,
   ): Promise<Layouts>
   {
-    const doc = await loadDocBlob(samplesPath, docName);
+    const doc = await loadDocBlob(handle, docName);
     return doc.layouts;
   }
 );

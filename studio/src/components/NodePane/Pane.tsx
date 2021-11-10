@@ -9,6 +9,7 @@ import * as PatternNode from 'studio/blueprint/patternNode';
 import * as PickBestNode from 'studio/blueprint/pickBestNode';
 import * as MergeNode from 'studio/blueprint/mergeNode';
 
+import * as Handle from 'studio/state/handle';
 import * as NodeDocTargets from 'studio/state/nodeDocTargets';
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
@@ -96,7 +97,7 @@ function getState(props: Props): State {
 
   const docPromise = docName
     ? loadDoc(
-        project.samplesPath,
+        sessionContext.handle as Handle.t,
         docName,
         Project.blueprintSettings(props.project),
         sessionContext,

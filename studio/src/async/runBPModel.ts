@@ -4,9 +4,10 @@ import {Value as TheSessionContext} from 'studio/context/SessionContext';
 import {BlueprintSettings, makeConfig} from 'studio/state/settings';
 import {stringify, writeString} from 'studio/util/stringifyForPython';
 import {loadDocBlob} from 'studio/async/loadDocs';
+import * as Handle from 'studio/state/handle';
 
 export default async function runBPModel(
-  samplesPath: string,
+  handle: Handle.t,
   docName: string,
   model: Model.t,
   blueprintSettings: BlueprintSettings,

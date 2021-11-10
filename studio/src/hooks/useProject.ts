@@ -10,6 +10,7 @@ import * as AutosaverState from 'studio/state/autosaverState';
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
 import mainReducer, {Action} from 'studio/state/mainReducer';
+import * as Handle from 'studio/state/handle';
 
 import useTriggerUpdate from 'studio/hooks/useTriggerUpdate';
 
@@ -21,11 +22,11 @@ import assert from 'studio/util/assert';
 
 function useInitialProject(sessionContext: TheSessionContext): Resource.t<Project.t> {
   const getter = React.useMemo(() => {
-    const path = sessionContext.projectPath;
-    if (path == undefined) {
+    const handle = sessionContext.handle;
+    if (handle == undefined) {
       return undefined;
     } else {
-      return loadProject(sessionContext, path);
+      return loadProject(handle);
     }
   }, [sessionContext]);
 
@@ -104,9 +105,8 @@ function useAutosaveProject(sessionContext: TheSessionContext) {
         triggerUpdate();
 
         saveProject(
-          state.sessionContext,
+          state.sessionContext.handle as Handle.t,
           state.projectBeingSaved,
-          state.sessionContext.projectPath as string,
         ).then(
           (result: SaveProjectResult) => {
             assert(state.projectBeingSaved == result.project);

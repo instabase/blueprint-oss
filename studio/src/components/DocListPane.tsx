@@ -1,9 +1,11 @@
 import React from 'react';
 import ActionContext from 'studio/context/ActionContext';
+import SessionContext from 'studio/context/SessionContext';
 import DocListView from 'studio/components/DocListView';
 import {CollectionPlay, PlayBtn} from 'studio/components/StockSVGs';
 import useResource from 'studio/hooks/useResource';
 import * as Project from 'studio/state/project';
+import * as Handle from 'studio/state/handle';
 import assert from 'studio/util/assert';
 
 type Props = {
@@ -12,9 +14,12 @@ type Props = {
 
 export default function DocListPane({project}: Props) {
   const actionContext = React.useContext(ActionContext);
+  const sessionContext = React.useContext(SessionContext);
 
   const docNamesResource = useResource(
-    Project.activeDocNames(project)
+    Project.activeDocNames(
+      sessionContext.handle as Handle.t,
+      project)
   );
 
   // Janky, we could show "loading" better than this.

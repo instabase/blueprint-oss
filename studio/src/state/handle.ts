@@ -1,1 +1,3 @@
-export type t = {};
+export type t = {
+  entries: () => any;
+};

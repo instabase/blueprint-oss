@@ -5,9 +5,10 @@ import * as Project from 'studio/state/project';
 import {BlueprintSettings} from 'studio/state/settings';
 import {Value as TheSessionContext} from 'studio/context/SessionContext';
 import {stringify, writeString} from 'studio/util/stringifyForPython';
+import * as Handle from 'studio/state/handle';
 
 async function rawLoadDoc(
-  samplesPath: string,
+  handle: Handle.t,
   docName: string,
   blueprintSettings: BlueprintSettings,
   sessionContext: TheSessionContext):

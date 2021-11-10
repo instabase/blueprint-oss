@@ -1,21 +1,20 @@
 import React from 'react';
+import * as Handle from 'studio/state/handle';
 import assert from 'studio/util/assert';
 
 export type Value = {
   uuid: string;
   backendURL: string;
-  projectPath: string | undefined;
-  setProjectPath: (path: string | undefined) => void;
+  handle: Handle.t | undefined;
+  setHandle: (handle: Handle.t | undefined) => void;
 };
-
-const warning = () => console.warn('Using empty session context');
 
 export const Default = {
   type: undefined as any,
   uuid: undefined as any,
   backendURL: undefined as any,
-  projectPath: undefined as any,
-  setProjectPath: undefined as any,
+  handle: undefined as any,
+  setHandle: undefined as any,
 };
 
 export default React.createContext<Value>(Default);

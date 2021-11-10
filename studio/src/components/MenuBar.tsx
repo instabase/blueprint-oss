@@ -242,7 +242,7 @@ export default function MenuBar({
               text: 'Close project',
               type: 'ActionRow',
               action: (
-                () => sessionContext.setProjectPath(undefined)
+                () => sessionContext.setHandle(undefined)
               ),
               disabled: !project,
             },
@@ -330,6 +330,7 @@ export default function MenuBar({
               ),
               disabled: !project,
             },
+            /*
             {
               text: 'Download doc',
               type: 'ActionRow',
@@ -354,6 +355,7 @@ export default function MenuBar({
               ),
               disabled: !project?.selectedDocName,
             },
+            */
           ],
           onActionExecute: closeAllMenus,
         }}
@@ -484,25 +486,6 @@ export default function MenuBar({
                 () => {
                   localStorage.clear();
                   window.location.reload();
-                }
-              ),
-            },
-            {
-              text: 'Download load_docs response',
-              disabled: !project,
-              type: 'ActionRow',
-              action: (
-                () => {
-                  if (project) {
-                    rawLoadResponse(project.samplesPath).then(
-                      response => {
-                        saveData(
-                          JSON.stringify(response),
-                          'load_docs_response.json',
-                        );
-                      }
-                    );
-                  }
                 }
               ),
             },

@@ -11,6 +11,7 @@ import runBPModel from 'studio/async/runBPModel';
 import * as DocRun from 'studio/state/docRun';
 import * as ModelRun from 'studio/state/modelRun';
 import * as Project from 'studio/state/project';
+import * as Handle from 'studio/state/handle';
 
 import {UUID} from 'studio/util/types';
 import assert from 'studio/util/assert';
@@ -33,7 +34,8 @@ export default function useModelRunner(
   const state = stateRef.current;
 
   React.useEffect(() => {
-    if (project != undefined && state != undefined) {
+    const handle = sessionContext.handle;
+    if (project != undefined && state != undefined && handle != undefined) {
       for (let modelRun of project.modelRuns) {
         if (state.numActiveDocRuns >= project.settings.numSimultaneousModelRuns) {
           break;
@@ -46,7 +48,7 @@ export default function useModelRunner(
 
           if (!state.startedDocRuns.has(docRun.uuid)) {
             state.numActiveDocRuns++;
-            start(modelRun, docRun, project,
+            start(modelRun, docRun, project, handle,
                   sessionContext, actionContext, state);
           }
         }
@@ -65,6 +67,7 @@ async function start(
   modelRun: ModelRun.t,
   docRun: DocRun.PendingDocRun,
   project: Project.t,
+  handle: Handle.t,
   sessionContext: TheSessionContext,
   actionContext: TheActionContext,
   state: State)
@@ -99,7 +102,7 @@ async function start(
     });
 
     const results = await runBPModel(
-      project.samplesPath,
+      handle,
       docName,
       model,
       Project.blueprintSettings(project),
