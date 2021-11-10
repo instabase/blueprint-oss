@@ -12,6 +12,7 @@ import MenuBar from 'studio/components/MenuBar';
 
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
+import * as Handle from 'studio/state/handle';
 import mainReducer from 'studio/state/mainReducer';
 
 import useProject from 'studio/hooks/useProject';
@@ -257,7 +258,7 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
             // @ts-ignore
             window.showDirectoryPicker().then(
               (handle: any) => runNewProjectModalInteraction(
-                handle, sessionContext));
+                handle as (Handle.t | undefined), sessionContext));
           }
         }
       >
@@ -300,18 +301,18 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
 }
 
 async function runNewProjectModalInteraction(
-    dirHandle: any,
+    handle: Handle.t | undefined,
     sessionContext: TheSessionContext)
 {
   // @ts-ignore
-  if (!dirHandle) {
+  if (!handle) {
     console.log('No dir handle, returning');
     return;
   }
-  console.log('Got directory from user', dirHandle.entries());
+  console.log('Got directory from user', handle.entries());
 
   const entries = new Map<any, any>();
-  for await (let [k, v] of dirHandle.entries()) {
+  for await (let [k, v] of handle.entries()) {
     entries.set(k, v);
   }
   console.log('Got contents of directory', entries);
