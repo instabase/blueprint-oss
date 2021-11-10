@@ -20,7 +20,6 @@ import useModalContainer from 'studio/hooks/useModalContainer';
 import useIntegerColors from 'studio/hooks/useIntegerColors';
 import useLocalStorageState from 'studio/hooks/useLocalStorageState';
 import useModelRunner from 'studio/hooks/useModelRunner';
-import useRecentProjectsList from 'studio/hooks/useRecentProjectsList';
 
 import {saveProject} from 'studio/async/project';
 import {UUID, isString} from 'studio/util/types';
@@ -59,19 +58,6 @@ export default function App() {
       'Studio.LastProjectPath-v1',
       undefined,
       isProjectPath);
-
-  const [recentProjectPaths, setRecentProjectPaths] =
-    useRecentProjectsList();
-
-  React.useEffect(() => {
-    const MAX_RECENT_PROJECTS = 5;
-    if (projectPath != undefined) {
-      setRecentProjectPaths([
-        projectPath,
-        ...recentProjectPaths.filter(path => path != projectPath),
-      ].slice(0, MAX_RECENT_PROJECTS));
-    }
-  }, [projectPath]);
 
   const sessionContext = React.useMemo(() => ({
     uuid: sessionUUID,
@@ -127,7 +113,6 @@ export default function App() {
       />
       <MainViewLoader
         projectResource={projectResource}
-        recentProjectPaths={recentProjectPaths}
       />
       <StatusBar
         autosaverState={autosaverState}
@@ -142,7 +127,6 @@ export default function App() {
 
 type MainViewLoaderProps = {
   projectResource: Resource.t<Project.t>;
-  recentProjectPaths: string[];
 };
 
 function MainViewLoader(props: MainViewLoaderProps) {
@@ -159,7 +143,6 @@ function MainViewLoader(props: MainViewLoaderProps) {
               ? props.projectResource.errorMessage
               : undefined
           }
-          recentProjectPaths={props.recentProjectPaths}
         />
       );
     case 'Loading':
@@ -222,7 +205,6 @@ function isProjectPath(o: unknown): o is string | undefined {
 
 type NoProjectLoadedViewProps = {
   error: string | undefined;
-  recentProjectPaths: string[];
 };
 
 function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
@@ -272,30 +254,6 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
         {sessionContext.projectPath}:<br />
         {props.error}
       </div>
-    }
-
-    {props.recentProjectPaths.length > 0 &&
-      <>
-        <div className="CenteredText DisallowUserSelection">
-          Recent projects
-        </div>
-
-        {props.recentProjectPaths.map(
-          projectPath => (
-            <button
-              onClick={
-                event => {
-                  event.stopPropagation();
-                  event.preventDefault();
-                  sessionContext.setProjectPath(projectPath);
-                }
-              }
-            >
-              {projectPath}
-            </button>
-          )
-        )}
-      </>
     }
   </div>;
 }

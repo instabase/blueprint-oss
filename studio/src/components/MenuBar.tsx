@@ -20,7 +20,6 @@ import * as Project from 'studio/state/project';
 import * as Settings from 'studio/state/settings';
 
 import useKeyboardShortcut from 'studio/hooks/useKeyboardShortcut';
-import {clear as clearRecentProjects} from 'studio/hooks/useRecentProjectsList';
 
 import makeDebugBundle from 'studio/util/makeDebugBundle';
 
