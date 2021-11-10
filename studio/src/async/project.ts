@@ -1,4 +1,5 @@
 import {Value as TheSessionContext} from 'studio/context/SessionContext';
+import * as Handle from 'studio/state/handle';
 import * as Project from 'studio/state/project';
 import * as Settings from 'studio/state/settings';
 import * as debug from 'studio/util/debug';

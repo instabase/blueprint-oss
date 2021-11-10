@@ -53,21 +53,17 @@ export default function App() {
 
   const [sessionUUID] = React.useState<UUID>(uuidv4());
 
-  const [projectPath, setProjectPath] =
-    useLocalStorageState<string | undefined>(
-      'Studio.LastProjectPath-v1',
-      undefined,
-      isProjectPath);
+  const [handle, setHandle] = React.useState<Handle.t | undefined>(undefined);
 
   const sessionContext = React.useMemo(() => ({
     uuid: sessionUUID,
     backendURL: BACKEND_URL,
-    projectPath,
-    setProjectPath,
+    handle,
+    setHandle,
   }), [
     sessionUUID,
-    projectPath,
-    setProjectPath,
+    handle,
+    setHandle,
   ]);
 
   // Project context
@@ -161,7 +157,7 @@ function MainViewLoader(props: MainViewLoaderProps) {
           onReset={
             () => {
               console.error('Fatal error, resetting open project');
-              sessionContext.setProjectPath(undefined);
+              sessionContext.setHandle(undefined);
             }
           }
         >
@@ -250,8 +246,7 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
 
     {props.error &&
       <div className="CenteredText DisallowUserSelection">
-        Error loading project at<br/>
-        {sessionContext.projectPath}:<br />
+        Error loading project<br/>
         {props.error}
       </div>
     }
