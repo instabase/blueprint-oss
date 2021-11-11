@@ -1,10 +1,12 @@
 import memo from 'memoizee';
+import * as Handle from 'studio/state/handle';
 
 export async function loadImageAsBlob(url: string): Promise<Blob> {
   const response = await fetch(url);
   return response.blob();
 }
 
+/*
 function rawLoadImage(url: string): Promise<HTMLImageElement> {
   // console.debug(`Fetching image from ${url}`);
   return new Promise<HTMLImageElement>(
@@ -23,6 +25,15 @@ function rawLoadImage(url: string): Promise<HTMLImageElement> {
       };
     }
   );
+}
+*/
+
+async function rawLoadImage(handle: Handle.FileHandle): Promise<HTMLImageElement> {
+  const file = await handle.getFile();
+  const text = await file.text();
+  const img = document.createElement('img');
+  img.src = `data:image/jpg;${text}`;
+  return img;
 }
 
 export default memo(rawLoadImage, {max: 20});

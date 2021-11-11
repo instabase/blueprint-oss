@@ -18,7 +18,7 @@ export default ({layout}: Props) => {
     height: layout.height,
   };
 
-  const imagePromise = loadImage(layout.processed_image_path);
+  const imagePromise = loadImage(layout.file_handle);
   const imageResource = useResource(imagePromise);
 
   const ref = useDivRef();

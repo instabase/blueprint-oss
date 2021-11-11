@@ -42,7 +42,7 @@ export default (props: Props) => {
           layout => (
             <Image
               layout={layout}
-              key={layout.processed_image_path}
+              key={layout.file_name}
             />
           ),
         )

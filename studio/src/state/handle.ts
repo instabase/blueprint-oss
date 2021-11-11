@@ -3,7 +3,7 @@ type FileSystemWritableFileStream = {
   close: () => Promise<void>;
 };
 
-type FileHandle = {
+export type FileHandle = {
   getFile: () => Promise<File>;
   createWritable: () => Promise<FileSystemWritableFileStream>;
 };
@@ -11,4 +11,5 @@ type FileHandle = {
 export type t = {
   entries: () => any;
   getFileHandle: (s: string, opts?: any) => Promise<FileHandle>;
+  getDirectoryHandle: (s: string, opts?: any) => Promise<t>;
 };

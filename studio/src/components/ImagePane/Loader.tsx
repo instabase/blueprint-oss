@@ -13,7 +13,6 @@ import * as Handle from 'studio/state/handle';
 import useResource from 'studio/hooks/useResource';
 
 import {loadLayouts} from 'studio/async/loadDocs';
-import loadImage from 'studio/async/loadImage';
 import loadDoc from 'studio/async/loadDoc';
 
 import assert from 'studio/util/assert';

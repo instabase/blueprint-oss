@@ -7,7 +7,7 @@ import * as Project from 'studio/state/project';
 import * as Settings from 'studio/state/settings';
 
 import {loadResponse, loadDocBlob} from 'studio/async/loadDocs';
-import {loadImageAsBlob} from 'studio/async/loadImage';
+// import {loadImageAsBlob} from 'studio/async/loadImage';
 import loadDoc from 'studio/async/loadDoc';
 
 export default async function makeDebugBundle(

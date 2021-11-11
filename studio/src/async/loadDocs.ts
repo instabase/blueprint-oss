@@ -1,7 +1,7 @@
 import memo from 'memoizee';
 
 import * as Handle from 'studio/state/handle';
-
+import loadImage from 'studio/async/loadImage';
 import {hasOwnProperty, isArray} from 'studio/util/types';
 
 type DocName = string;
@@ -18,7 +18,8 @@ type WordPolyDict = {
 export type Layout = {
   width: number;
   height: number;
-  processed_image_path: string;
+  file_name: string;
+  file_handle: Handle.FileHandle;
 };
 
 export type Layouts = Record<string, Layout>;
@@ -33,28 +34,42 @@ type Response = {
   errors?: Array<any>;
 };
 
-function validateResponse(response: Response): void {
-  if (!hasOwnProperty(response, 'docs')) {
-    throw new Error();
-  }
-
-  if (hasOwnProperty(response, 'errors')) {
-    /*
-    if (!isArray(response.errors)) {
-      throw new Error();
-    }
-    */
-  }
-}
-
 export async function rawLoadResponse(handle: Handle.t): Promise<Response> {
-  const response = await fetch(
-    'load-all-docs'
-  );
+  console.log('Loading docs...');
 
-  const blob = await response.json();
+  const blob: Response = {
+    docs: {},
+    errors: [],
+  };
 
-  validateResponse(blob);
+  const imagesHandle = await handle.getDirectoryHandle('images');
+  for await (let [docName, imageHandle] of imagesHandle.entries()) {
+    // XXX: This is slow, and we are doing it on project load.
+    //      We could instead get the width/height when loading the image.
+    //      Probably the easiest way to make that work is to delete
+    //      the width/height properties from the Layout type above.
+    const image = await loadImage(imageHandle);
+
+    blob.docs[docName] = {
+      layouts: {
+        '0': { // "record name"
+          width: image.width,
+          height: image.height,
+          file_name: docName,
+          file_handle: imageHandle,
+        },
+      },
+      lines: [
+      ],
+    };
+  }
+  console.log('Done loading image data', blob);
+
+  const ocrFilesHandle = await handle.getDirectoryHandle('ocr');
+  for await (let [ocrFileName, ocrFileHandle] of ocrFilesHandle.entries()) {
+    // ...
+  }
+  console.log('Done loading ocr data', blob);
 
   return blob;
 }
