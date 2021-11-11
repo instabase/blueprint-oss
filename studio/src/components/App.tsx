@@ -222,10 +222,10 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
 
             alert('Select your project\'s root folder. ' +
                   'This folder should already have in it two subdirectories: ' +
-                  'one called images/ containing your image samples, and ' +
+                  'one called img/ containing your image samples, and ' +
                   'one called ocr/ containing your OCR files.\n\n' +
                   'The files in these folders must be named as follows: ' +
-                  'for every image images/foo.jpg (or images/foo.png, etc.), ' +
+                  'for every image img/foo.jpg (or img/foo.png, etc.), ' +
                   'there must be a corresponding OCR file called ' +
                   'ocr/foo.jpg.json (or ocr/foo.png.json, etc.).\n\n' +
                   'Your project file will be called project.json. ' +
@@ -317,7 +317,7 @@ async function runNewProjectModalInteraction(
     return;
   }
 
-  const imagesDirName = 'images';
+  const imagesDirName = 'img';
   if (entries.get(imagesDirName)?.kind != 'directory') {
     const error = 'Error: Images directory not found';
     console.log(error);

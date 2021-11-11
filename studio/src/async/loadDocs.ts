@@ -42,7 +42,7 @@ export async function rawLoadResponse(handle: Handle.t): Promise<Response> {
     errors: [],
   };
 
-  const imagesHandle = await handle.getDirectoryHandle('images');
+  const imagesHandle = await handle.getDirectoryHandle('img');
   for await (let [docName, imageHandle] of imagesHandle.entries()) {
     // XXX: This is slow, and we are doing it on project load.
     //      We could instead get the width/height when loading the image.
