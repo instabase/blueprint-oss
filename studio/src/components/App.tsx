@@ -244,6 +244,45 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
       </button>
     </div>
 
+    <div className="SimpleHorizontalStack">
+      <button
+        onClick={
+          event => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            console.log('Beginning load project interaction');
+
+            // @ts-ignore
+            window.showDirectoryPicker().then(
+              (handle: Handle.t | undefined) => {
+                if (!handle) {
+                  console.log('User did not select a project foler, aborting');
+                  return;
+                }
+
+                handle.getFileHandle('project.json').then(
+                  fileHandle => {
+                    console.log('Found project.json, loading project');
+                    sessionContext.setHandle(handle);
+                  }
+                ).catch(
+                  error => {
+                    console.log('Error looking for project.json', error);
+                    alert('Error: could not find project.json.\n\n' +
+                          'Please select a folder which contains a ' +
+                          'project.json file, or click "New project..."');
+                  }
+                );
+              }
+            );
+          }
+        }
+      >
+        Open project folder...
+      </button>
+    </div>
+
     {props.error &&
       <div className="CenteredText DisallowUserSelection">
         Error loading project<br/>
