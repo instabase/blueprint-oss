@@ -218,21 +218,42 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
           event => {
             event.stopPropagation();
             event.preventDefault();
-            console.log('Beginning create new project interaction');
 
-            alert('Select your project\'s root folder. ' +
+            alert('Please read these instructions carefully. ' +
+                  'The only supported browser is Chrome. ' +
+                  'On Chrome, these instructions span more than the height ' +
+                  'of this alert window, so please scroll down.\n\n' +
+                  'Select your project\'s root folder. ' +
                   'This folder should already have in it two subdirectories: ' +
                   'one called img/ containing your image samples, and ' +
                   'one called ocr/ containing your OCR files.\n\n' +
                   'The files in these folders must be named as follows: ' +
-                  'for every image img/foo.jpg (or img/foo.png, etc.), ' +
-                  'there must be a corresponding OCR file called ' +
-                  'ocr/foo.jpg.json (or ocr/foo.png.json, etc.).\n\n' +
+                  'for every image img/foo.jpg, ' +
+                  'there must be a corresponding OCR file whose name is ' +
+                  'exactly ocr/foo.jpg.json.\n\n' +
+                  'Your images have to be JPEGs. If this is really annoying, ' +
+                  'it shouldn\'t be that hard to fix it in the source. ' +
+                  'You just have to put the right thing (instead of "jpg") ' +
+                  'into the img.src line in the loadImage source file.\n\n' +
                   'Your project file will be called project.json. ' +
                   'It is not possible to pick another name. ' +
                   'As a consequence, you cannot have multiple projects ' +
                   'working with the same image/OCR samples. ' +
                   'To do so, make a copy of your sample data.');
+          }
+        }
+      >
+        Instructions (important)
+      </button>
+    </div>
+
+    <div className="SimpleHorizontalStack">
+      <button
+        onClick={
+          event => {
+            event.stopPropagation();
+            event.preventDefault();
+            console.log('Beginning create new project interaction');
             // @ts-ignore
             window.showDirectoryPicker().then(
               (handle: any) => runNewProjectModalInteraction(
