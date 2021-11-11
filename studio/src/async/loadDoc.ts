@@ -21,7 +21,20 @@ async function rawLoadDoc(
   );
   const doc = generate_doc_from_doc_blob(doc_blob, ${writeString(docName)});
   */
-  throw new Error('Not implemented');
+  return {
+    bbox: {
+      ix: {
+        a: 0,
+        b: 0,
+      },
+      iy: {
+        a: 0,
+        b: 0,
+      },
+    },
+    entities: [],
+    name: docName,
+  };
 }
 
 const loadDoc = memo(rawLoadDoc, {max: 500});
