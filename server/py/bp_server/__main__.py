@@ -16,7 +16,6 @@ from flask_cors import CORS # type: ignore
 app = Flask(__name__)
 CORS(app)
 
-STUDIO_PROJECTS_PATH: str = os.getenv('STUDIO_PROJECTS_PATH', 'UNDEFINED')
 BP_PATH = f'{Path.cwd().absolute()}/../blueprint/py'
 PYTHONPATH = f'{BP_PATH}'
 
@@ -30,21 +29,9 @@ def make_error_response(e: Exception) -> Tuple[str, int]:
   }), 500
 
 
-@app.route('/status')
-def health_check() -> Tuple[str, int]:
-  return jsonify({'status': 'alive'}), 200
-
-
 @app.errorhandler(500)
 def handle_bad_request(e: Exception) -> Tuple[str, int]:
   return jsonify({'error': str(e)}), 500
-
-
-@app.route('/server_info')
-def server_info() -> Any:
-  return jsonify({
-    'studioProjectsPath': STUDIO_PROJECTS_PATH,
-  }), 200
 
 
 @app.route('/run_bp_model', methods=['POST'])
@@ -160,42 +147,6 @@ def wiif() -> Any:
         }
       })
 
-  except Exception as e:
-    return make_error_response(e)
-
-
-@app.route('/ls/<path:abs_path>')
-def ls(abs_path: str) -> Any:
-  try:
-    return jsonify(os.listdir('/' + abs_path))
-  except Exception as e:
-    return make_error_response(e)
-
-
-@app.route('/read_file/<path:abs_path>')
-def read_file(abs_path: str) -> Any:
-  try:
-    with open('/' + abs_path) as f:
-      return f.read()
-  except Exception as e:
-    return make_error_response(e)
-
-
-@app.route('/write_file/<path:abs_path>', methods=['POST'])
-def write_file(abs_path: str) -> Any:
-  try:
-    body = request.get_data()
-    with open('/' + abs_path, 'wb') as f:
-      f.write(body)
-      return 'OK', 200
-  except Exception as e:
-    return make_error_response(e)
-
-
-@app.route('/projects')
-def projects() -> Any:
-  try:
-    return ls(STUDIO_PROJECTS_PATH)
   except Exception as e:
     return make_error_response(e)
 
