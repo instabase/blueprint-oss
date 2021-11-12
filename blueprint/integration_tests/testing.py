@@ -1,8 +1,5 @@
 """Utilities for unit/integration testing Blueprint code."""
 
-import signal
-import time
-
 from dataclasses import dataclass
 from typing import Any, Callable, Dict, FrozenSet, Iterable
 

@@ -28,5 +28,9 @@ export default async function runBPModel(
   });
   const responseJSON = await response.json();
   console.log(`Got response from ${endpoint}`, docName, doc, model, responseJSON);
+  if ('error' in responseJSON) {
+    console.log(`Error from ${endpoint}`, responseJSON);
+    throw responseJSON;
+  }
   return responseJSON['results'] as Results.t;
 }

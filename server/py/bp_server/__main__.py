@@ -90,12 +90,12 @@ def run_bp_model() -> Any:
     payload: Dict[str, Any] = request.get_json(force=True)
     doc = load_doc_from_json(payload['doc'])
     model = load_model_from_json(payload['model'])
-    # FIXME: Make timeout configurable in UI.
-    TIMEOUT = 45
+    # FIXME: Make these configurable from the GUI.
+    TIMEOUT = -1 # signal (used for timeouts) only work from the main thread
     NUM_SAMPLES = 20
     config = Config(NUM_SAMPLES, TIMEOUT)
     results = run_model(doc, model, config)
-    return jsonify({'doc': asdict(results)})
+    return jsonify({'results': asdict(results)})
 
     """
     payload: Dict[str, Any] = request.get_json(force=True)

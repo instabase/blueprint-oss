@@ -41,6 +41,10 @@ async function rawLoadDoc(
   });
   const responseJSON = await response.json();
   console.log(`Got response from ${endpoint}`, handle, docName, responseJSON);
+  if ('error' in responseJSON) {
+    console.log(`Error from ${endpoint}`, responseJSON);
+    throw responseJSON;
+  }
   return responseJSON['doc'] as Doc.t;
 }
 

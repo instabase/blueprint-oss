@@ -28,6 +28,10 @@ async function rawWIIF(
   });
   const responseJSON = await response.json();
   console.log(`Got response from ${endpoint}`, doc, node, targetExtraction, responseJSON);
+  if ('error' in responseJSON) {
+    console.log(`Error from ${endpoint}`, responseJSON);
+    throw responseJSON;
+  }
   return responseJSON['wiif_node'] as WiifNode.t;
 }
 

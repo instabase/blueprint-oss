@@ -27,5 +27,9 @@ export default async function synthesis(
   });
   const responseJSON = await response.json();
   console.log(`Got response from ${endpoint}`, doc, targetExtraction, schema, responseJSON);
+  if ('error' in responseJSON) {
+    console.log(`Error from ${endpoint}`, responseJSON);
+    throw responseJSON;
+  }
   return responseJSON['node'] as PatternNode.t;
 }

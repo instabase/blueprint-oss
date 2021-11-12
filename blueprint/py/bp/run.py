@@ -2,7 +2,6 @@
 
 import json
 import logging
-import signal
 
 from typing import Dict, Optional
 
@@ -78,8 +77,11 @@ def run_model(doc: Document, root: Node, config: Config=Config()) \
   timed_out = False
   bound_node: Optional[BoundNode] = None
   try:
-    bound_node = timeout(config.timeout,
-      lambda: run_with_runtime_tracker(runtime_tracker))
+    if config.timeout != -1:
+      bound_node = timeout(config.timeout,
+        lambda: run_with_runtime_tracker(runtime_tracker))
+    else:
+      bound_node = run_with_runtime_tracker(runtime_tracker)
   except TimeoutError:
     bp_logging.info(f'Extraction timed out for {doc.name}. ')
     timed_out = True
