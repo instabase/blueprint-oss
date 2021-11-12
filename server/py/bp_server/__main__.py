@@ -53,7 +53,7 @@ def gen_bp_doc() -> Any:
 
       subprocess.call(
         f'python3 {BP_PATH}/bp/cli/cli_main.py gen_bp_doc '
-        f'-g {google_ocr_path} -o {output_doc_path}'
+        f'-g {google_ocr_path} -o {output_doc_path}',
         shell=True, env={'PYTHONPATH': PYTHONPATH})
 
       return jsonify({
