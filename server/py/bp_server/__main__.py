@@ -80,8 +80,14 @@ def run_bp_model() -> Any:
 
     with tempfile.TemporaryDirectory() as tempdir:
 
-      doc_path = f'{tempdir}/doc.json'
+      fake_doc_name = 'doc.json'
+
+      doc_path = f'{tempdir}/{fake_doc_name}'
       model_path = f'{tempdir}/model.json'
+      output_dir = f'{tempdir}/output'
+
+      # Pretty janky.json.json
+      output_file = f'{output_dir}/{fake_doc_name}.json'
 
       with Path(doc_path).open('w') as f:
         f.write(json.dumps(doc))
@@ -90,13 +96,13 @@ def run_bp_model() -> Any:
 
       subprocess.call(
         f'python3 {BP_PATH}/bp/cli/cli_main.py run_model '
-        f'-m {model_path} -o {tempdir} -d {doc_path} -t {TIMEOUT} '
+        f'-m {model_path} -o {output_dir} -d {doc_path} -t {TIMEOUT} '
         f'-n {NUM_SAMPLES}',
         shell=True, env={'PYTHONPATH': PYTHONPATH})
 
       return jsonify({
         'payload': {
-          'results': json.load(Path(f'{doc_path}.json').open())
+          'results': json.load(Path(f'{output_file}').open())
         }
       })
 
