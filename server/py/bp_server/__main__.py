@@ -12,6 +12,9 @@ from typing import Any, Callable, Dict, Tuple
 from flask import Flask, jsonify, request
 from flask_cors import CORS # type: ignore
 
+from bp.document import dump_to_json as dump_doc_to_json
+from bp.google_ocr_file import generate_doc_from_google_ocr_json
+
 
 app = Flask(__name__)
 CORS(app)
@@ -38,9 +41,18 @@ def handle_bad_request(e: Exception) -> Tuple[str, int]:
 def gen_bp_doc() -> Any:
   try:
     payload: Dict[str, Any] = request.get_json(force=True)
-
     google_ocr_json = payload['google_ocr']
+    doc = generate_doc_from_google_ocr_json(
+            google_ocr_json,
+            'random_document_name')
 
+    return jsonify({
+      'payload': {
+        'results': dump_doc_to_json(doc)
+      }
+    })
+
+    """
     with tempfile.TemporaryDirectory() as tempdir:
 
       print(f'running gen_bp_doc, with tempdir={tempdir}')
@@ -52,7 +64,7 @@ def gen_bp_doc() -> Any:
         f.write(json.dumps(google_ocr_json))
 
       subprocess.call(
-        f'python3 {BP_PATH}/bp/cli/cli_main.py gen_bp_doc '
+        f'python3 -m bp gen_bp_doc '
         f'-g {google_ocr_path} -o {output_doc_path}',
         shell=True, env={'PYTHONPATH': PYTHONPATH})
 
@@ -61,6 +73,7 @@ def gen_bp_doc() -> Any:
           'results': json.load(Path(f'{output_doc_path}').open())
         }
       })
+    """
 
   except Exception as e:
     return make_error_response(e)

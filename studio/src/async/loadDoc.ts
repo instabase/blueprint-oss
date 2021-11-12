@@ -7,6 +7,15 @@ import {Value as TheSessionContext} from 'studio/context/SessionContext';
 import {stringify, writeString} from 'studio/util/stringifyForPython';
 import * as Handle from 'studio/state/handle';
 
+async function onDiskDocFileHandle(
+  handle: Handle.t,
+  docName: string):
+    Promise<Handle.FileHandle>
+{
+  const subdirHandle = await handle.getDirectoryHandle('ocr');
+  return subdirHandle.getFileHandle(`${docName}.json`);
+}
+
 async function rawLoadDoc(
   handle: Handle.t,
   docName: string,
@@ -14,27 +23,34 @@ async function rawLoadDoc(
   sessionContext: TheSessionContext):
     Promise<Doc.t>
 {
-  /*
-  const doc_blob = await loadDocBlob(
-    samplesPath,
-    docName,
-  );
-  const doc = generate_doc_from_doc_blob(doc_blob, ${writeString(docName)});
-  */
-  return {
-    bbox: {
-      ix: {
-        a: 0,
-        b: 0,
-      },
-      iy: {
-        a: 0,
-        b: 0,
-      },
+  console.log('Running loadDoc', handle, docName);
+
+  const fileHandle = await onDiskDocFileHandle(handle, docName);
+  console.log('Got filehandle for doc', fileHandle);
+
+  const file = await fileHandle.getFile();
+  const text = await file.text();
+  const googleOCR = JSON.parse(text);
+  console.log('Loaded raw Google OCR doc', googleOCR);
+
+  const payload = {'google_ocr': googleOCR};
+
+  const response = await fetch('http://localhost:5000/gen_bp_doc', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
     },
-    entities: [],
-    name: docName,
-  };
+    body: JSON.stringify(payload),
+  });
+
+  const json = await response.json();
+
+  console.log('Got loadDoc response', handle, docName, json);
+
+  const resultText = json.payload.results;
+  const result = JSON.parse(resultText) as Doc.t;
+
+  return result;
 }
 
 const loadDoc = memo(rawLoadDoc, {max: 500});
