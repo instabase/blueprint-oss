@@ -34,6 +34,38 @@ def handle_bad_request(e: Exception) -> Tuple[str, int]:
   return jsonify({'error': str(e)}), 500
 
 
+@app.route('/gen_bp_doc', methods=['POST'])
+def gen_bp_doc() -> Any:
+  try:
+    payload: Dict[str, Any] = request.get_json(force=True)
+
+    google_ocr_json = payload['google_ocr']
+
+    with tempfile.TemporaryDirectory() as tempdir:
+
+      print(f'running gen_bp_doc, with tempdir={tempdir}')
+
+      google_ocr_path = f'{tempdir}/google_ocr.json'
+      output_doc_path = f'{tempdir}/doc.json'
+
+      with Path(google_ocr_path).open('w') as f:
+        f.write(json.dumps(google_ocr_json))
+
+      subprocess.call(
+        f'python3 {BP_PATH}/bp/cli/cli_main.py gen_bp_doc '
+        f'-g {google_ocr_path} -o {output_doc_path}'
+        shell=True, env={'PYTHONPATH': PYTHONPATH})
+
+      return jsonify({
+        'payload': {
+          'results': json.load(Path(f'{output_doc_path}').open())
+        }
+      })
+
+  except Exception as e:
+    return make_error_response(e)
+
+
 @app.route('/run_bp_model', methods=['POST'])
 def run_bp_model() -> Any:
   try:
