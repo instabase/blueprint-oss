@@ -6,14 +6,25 @@ import subprocess
 import tempfile
 import traceback
 
+from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Callable, Dict, Tuple
 
 from flask import Flask, jsonify, request
 from flask_cors import CORS # type: ignore
 
-from bp.document import dump_to_json as dump_doc_to_json
+from bp.config import Config
+from bp.document import (
+  dump_to_json as dump_doc_to_json,
+  load_doc_from_json,
+)
+from bp.extraction import load_extraction_from_json
 from bp.google_ocr_file import generate_doc_from_google_ocr_json
+from bp.model import load_model_from_json
+from bp.run import run_model
+from bp.synthesis.synthesize import synthesize_pattern_node
+from bp.synthesis.wiif import why_is_it_failing
+from bp.targets import load_schema_from_json, load_targets_from_json
 
 
 app = Flask(__name__)
@@ -43,14 +54,8 @@ def gen_bp_doc() -> Any:
     payload: Dict[str, Any] = request.get_json(force=True)
     google_ocr_json = payload['google_ocr']
     doc = generate_doc_from_google_ocr_json(
-            google_ocr_json,
-            'random_document_name')
-
-    return jsonify({
-      'payload': {
-        'results': dump_doc_to_json(doc)
-      }
-    })
+            google_ocr_json, 'random_document_name')
+    return jsonify({'doc': asdict(doc)})
 
     """
     with tempfile.TemporaryDirectory() as tempdir:
@@ -83,13 +88,20 @@ def gen_bp_doc() -> Any:
 def run_bp_model() -> Any:
   try:
     payload: Dict[str, Any] = request.get_json(force=True)
-
-    doc = payload['doc']
-    model_json = payload['model']
-
+    doc = load_doc_from_json(payload['doc'])
+    model = load_model_from_json(payload['model'])
     # FIXME: Make timeout configurable in UI.
     TIMEOUT = 45
     NUM_SAMPLES = 20
+    config = Config(NUM_SAMPLES, TIMEOUT)
+    results = run_model(doc, model, config)
+    return jsonify({'doc': asdict(results)})
+
+    """
+    payload: Dict[str, Any] = request.get_json(force=True)
+
+    doc = payload['doc']
+    model_json = payload['model']
 
     with tempfile.TemporaryDirectory() as tempdir:
 
@@ -118,6 +130,7 @@ def run_bp_model() -> Any:
           'results': json.load(Path(f'{output_file}').open())
         }
       })
+    """
 
   except Exception as e:
     return make_error_response(e)
@@ -126,6 +139,14 @@ def run_bp_model() -> Any:
 @app.route('/synthesis', methods=['POST'])
 def synthesis() -> Any:
   try:
+    payload: Dict[str, Any] = request.get_json(force=True)
+    doc = load_doc_from_json(payload['doc'])
+    target_extraction = load_extraction_from_json(payload['target_extraction'])
+    schema = load_schema_from_json(payload['schema'])
+    node = synthesize_pattern_node(target_extraction, schema, doc)
+    return jsonify({'node': asdict(node)})
+
+    """
     payload: Dict[str, Any] = request.get_json(force=True)
 
     doc = payload['doc']
@@ -158,6 +179,7 @@ def synthesis() -> Any:
           'node': json.load(Path(f'{output_path}').open())
         }
       })
+    """
 
   except Exception as e:
     return make_error_response(e)
@@ -166,6 +188,14 @@ def synthesis() -> Any:
 @app.route('/wiif', methods=['POST'])
 def wiif() -> Any:
   try:
+    payload: Dict[str, Any] = request.get_json(force=True)
+    doc = load_doc_from_json(payload['doc'])
+    node = load_model_from_json(payload['node'])
+    target_extraction = load_extraction_from_json(payload['target_extraction'])
+    wiif_node = why_is_it_failing(target_extraction, node, doc)
+    return jsonify({'wiif_node': asdict(wiif_node)})
+
+    """
     payload: Dict[str, Any] = request.get_json(force=True)
 
     doc = payload['doc']
@@ -197,6 +227,7 @@ def wiif() -> Any:
           'wiif_node': json.load(Path(f'{output_path}').open())
         }
       })
+    """
 
   except Exception as e:
     return make_error_response(e)

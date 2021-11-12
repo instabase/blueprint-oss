@@ -15,7 +15,20 @@ async function rawWIIF(
   sessionContext: TheSessionContext,
 ): Promise<WiifNode.t>
 {
-  throw new Error('Not implemented');
+  const endpoint = 'wiif';
+  console.log(`Hitting ${endpoint}`, doc, node, targetExtraction);
+  const response = await fetch(`http://localhost:5000/${endpoint}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      'doc': doc,
+      'node': node,
+      'target_extraction': targetExtraction,
+    }),
+  });
+  const responseJSON = await response.json();
+  console.log(`Got response from ${endpoint}`, doc, node, targetExtraction, responseJSON);
+  return responseJSON['wiif_node'] as WiifNode.t;
 }
 
 export default memo(rawWIIF, {max: 100});

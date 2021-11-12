@@ -23,34 +23,25 @@ async function rawLoadDoc(
   sessionContext: TheSessionContext):
     Promise<Doc.t>
 {
-  console.log('Running loadDoc', handle, docName);
-
   const fileHandle = await onDiskDocFileHandle(handle, docName);
   console.log('Got filehandle for doc', fileHandle);
-
   const file = await fileHandle.getFile();
   const text = await file.text();
   const googleOCR = JSON.parse(text);
   console.log('Loaded raw Google OCR doc', googleOCR);
 
-  const payload = {'google_ocr': googleOCR};
-
-  const response = await fetch('http://localhost:5000/gen_bp_doc', {
+  const endpoint = 'gen_bp_doc';
+  console.log(`Hitting ${endpoint}`, handle, docName);
+  const response = await fetch(`http://localhost:5000/${endpoint}`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(payload),
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      'google_ocr': googleOCR
+    }),
   });
-
-  const json = await response.json();
-
-  console.log('Got loadDoc response', handle, docName, json);
-
-  const resultText = json.payload.results;
-  const result = JSON.parse(resultText) as Doc.t;
-
-  return result;
+  const responseJSON = await response.json();
+  console.log(`Got response from ${endpoint}`, handle, docName, responseJSON);
+  return responseJSON['doc'] as Doc.t;
 }
 
 const loadDoc = memo(rawLoadDoc, {max: 500});

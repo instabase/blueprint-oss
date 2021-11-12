@@ -14,5 +14,18 @@ export default async function synthesis(
   sessionContext: TheSessionContext,
 ): Promise<PatternNode.t>
 {
-  throw new Error('Not implemented');
+  const endpoint = 'synthesis';
+  console.log(`Hitting ${endpoint}`, doc, targetExtraction, schema);
+  const response = await fetch(`http://localhost:5000/${endpoint}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      'doc': doc,
+      'target_extraction': targetExtraction,
+      'schema': schema,
+    }),
+  });
+  const responseJSON = await response.json();
+  console.log(`Got response from ${endpoint}`, doc, targetExtraction, schema, responseJSON);
+  return responseJSON['node'] as PatternNode.t;
 }

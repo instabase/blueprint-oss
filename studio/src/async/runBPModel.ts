@@ -3,7 +3,7 @@ import * as Results from 'studio/blueprint/results';
 import {Value as TheSessionContext} from 'studio/context/SessionContext';
 import {BlueprintSettings, makeConfig} from 'studio/state/settings';
 import {stringify, writeString} from 'studio/util/stringifyForPython';
-import {loadDocBlob} from 'studio/async/loadDocs';
+import loadDoc from 'studio/async/loadDoc';
 import * as Handle from 'studio/state/handle';
 
 export default async function runBPModel(
@@ -14,12 +14,19 @@ export default async function runBPModel(
   sessionContext: TheSessionContext,
 ): Promise<Results.t>
 {
-/*
-  const doc_blob = await loadDocBlob(
-    samplesPath,
-    docName,
-  );
-  const config = makeConfig(blueprintSettings);
-*/
-  throw new Error('Not implemented');
+  const doc = await loadDoc(handle, docName, blueprintSettings, sessionContext);
+
+  const endpoint = 'run_bp_model';
+  console.log(`Hitting ${endpoint}`, docName, doc, model);
+  const response = await fetch(`http://localhost:5000/${endpoint}`, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({
+      'doc': doc,
+      'model': model,
+    }),
+  });
+  const responseJSON = await response.json();
+  console.log(`Got response from ${endpoint}`, docName, doc, model, responseJSON);
+  return responseJSON['results'] as Results.t;
 }
