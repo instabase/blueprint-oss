@@ -6,7 +6,7 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import Any, Dict, Tuple
 
-from flask import Flask, jsonify, request
+from flask import Flask, Response, jsonify, request
 from flask_cors import CORS # type: ignore
 
 from bp.config import Config
@@ -27,7 +27,7 @@ BP_PATH = f'{Path.cwd().absolute()}/../blueprint/py'
 PYTHONPATH = f'{BP_PATH}'
 
 
-def make_error_response(e: Exception) -> Tuple[str, int]:
+def make_error_response(e: Exception) -> Tuple[Response, int]:
   error = str(e)
   _traceback = traceback.format_exception(None, e, e.__traceback__)
   return jsonify({
@@ -36,15 +36,15 @@ def make_error_response(e: Exception) -> Tuple[str, int]:
   }), 500
 
 
-@app.errorhandler(500)
-def handle_bad_request(e: Exception) -> Tuple[str, int]:
+@app.errorhandler(500) # type: ignore
+def handle_bad_request(e: Exception) -> Tuple[Response, int]:
   return jsonify({'error': str(e)}), 500
 
 
 @app.route('/gen_bp_doc', methods=['POST'])
 def gen_bp_doc() -> Any:
   try:
-    payload: Dict[str, Any] = request.get_json(force=True)
+    payload: Dict[str, Any] = request.get_json(force=True) # type: ignore
     google_ocr_json = payload['google_ocr']
     doc = generate_doc_from_google_ocr_json(
             google_ocr_json, 'random_document_name')
@@ -57,7 +57,7 @@ def gen_bp_doc() -> Any:
 @app.route('/run_bp_model', methods=['POST'])
 def run_bp_model() -> Any:
   try:
-    payload: Dict[str, Any] = request.get_json(force=True)
+    payload: Dict[str, Any] = request.get_json(force=True) # type: ignore
     doc = load_doc_from_json(payload['doc'])
     model = load_model_from_json(payload['model'])
     # FIXME: Make these configurable from the GUI.
@@ -74,7 +74,7 @@ def run_bp_model() -> Any:
 @app.route('/synthesis', methods=['POST'])
 def synthesis() -> Any:
   try:
-    payload: Dict[str, Any] = request.get_json(force=True)
+    payload: Dict[str, Any] = request.get_json(force=True) # type: ignore
     doc = load_doc_from_json(payload['doc'])
     target_extraction = load_extraction_from_json(payload['target_extraction'])
     schema = load_schema_from_json(payload['schema'])
@@ -88,7 +88,7 @@ def synthesis() -> Any:
 @app.route('/wiif', methods=['POST'])
 def wiif() -> Any:
   try:
-    payload: Dict[str, Any] = request.get_json(force=True)
+    payload: Dict[str, Any] = request.get_json(force=True) # type: ignore
     doc = load_doc_from_json(payload['doc'])
     node = load_model_from_json(payload['node'])
     target_extraction = load_extraction_from_json(payload['target_extraction'])

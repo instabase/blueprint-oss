@@ -4,13 +4,9 @@ matrix:
       python:
         - "3.7"
       install:
-        - pip install mypy
-        - pip install -r blueprint/requirements.txt
+        - pip install -r python_requirements.txt
       script:
-        - ./mypy.sh
-        - cd blueprint
-        - ./tests.sh
-        - cd ..
+        - ./all_python_tests.sh
     - language: node_js
       node_js:
         - 12

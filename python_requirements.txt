@@ -1,0 +1,4 @@
+mypy
+git+https://github.com/jlieth/hocr-parser
+flask
+flask-cors
