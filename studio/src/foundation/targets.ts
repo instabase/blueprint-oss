@@ -1,7 +1,7 @@
 import memo from 'memoizee';
 
 import * as Doc from 'studio/foundation/doc';
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Schema from 'studio/foundation/targetsSchema';
 import * as TargetValue from 'studio/foundation/targetValue';
 import * as Entity from 'studio/foundation/entity';
@@ -14,7 +14,7 @@ type DocTagDescription = {
 type DocTags = Partial<Record<string, DocTagDescription>>;
 
 export type t = {
-  doc_targets: RecordTargets.t[];
+  doc_targets: DocTargets.t[];
   schema: Schema.t;
   doc_tags: DocTags;
 
@@ -32,8 +32,8 @@ export function build(): t {
 
 export function tagsPresentInSomeDoc(targets: t): string[] {
   const result: string[] = [];
-  for (let recordTargets of targets.doc_targets) {
-    for (let tag of recordTargets.doc_tags) {
+  for (let docTargets of targets.doc_targets) {
+    for (let tag of docTargets.doc_tags) {
       if (!result.includes(tag)) {
         result.push(tag);
       }
@@ -42,27 +42,27 @@ export function tagsPresentInSomeDoc(targets: t): string[] {
   return result;
 }
 
-export const recordNames = memo(
+export const docNames = memo(
   function(targets: t): string[] {
     return targets.doc_targets.map(
-      recordTargets => recordTargets.doc_name
+      docTargets => docTargets.doc_name
     );
   }
 );
 
-export function recordTargets(
+export function docTargets(
   targets: t,
-  recordName: string):
-    RecordTargets.t | undefined
+  docName: string):
+    DocTargets.t | undefined
 {
-  return asDict(targets)[recordName];
+  return asDict(targets)[docName];
 }
 
 export const asDict = memo(
   function(targets: t):
-    Partial<Record<string, RecordTargets.t>>
+    Partial<Record<string, DocTargets.t>>
   {
-    return RecordTargets.asRecordNameDict(targets.doc_targets);
+    return DocTargets.asDocNameDict(targets.doc_targets);
   }
 );
 
@@ -78,20 +78,20 @@ export type FieldValuePair = [string, TargetValue.t | undefined];
 
 export function fieldValuePairs(
   targets: t,
-  recordName: string):
+  docName: string):
     FieldValuePair[] | undefined
 {
-  const theseRecordTargets = recordTargets(targets, recordName);
-  if (theseRecordTargets != undefined) {
+  const theseDocTargets = docTargets(targets, docName);
+  if (theseDocTargets != undefined) {
     return Schema.fieldValuePairs(
       targets.schema,
-      theseRecordTargets);
+      theseDocTargets);
   }
 }
 
 export function merged(existing: t, provided: t): t {
   return populateSchema({
-    doc_targets: RecordTargets.merged(existing.doc_targets, provided.doc_targets),
+    doc_targets: DocTargets.merged(existing.doc_targets, provided.doc_targets),
     schema:
       provided.schema
         ? Schema.merged(existing.schema, provided.schema)
@@ -107,8 +107,8 @@ export function populateSchema(targets: t): t {
   const schema = [...targets.schema];
 
   targets.doc_targets.forEach(
-    recordTargets => {
-      recordTargets.assignments.forEach(
+    docTargets => {
+      docTargets.assignments.forEach(
         ({field}) => {
           if (!Schema.hasField(schema, field)) {
             schema.push({
@@ -144,9 +144,9 @@ export function withoutField(targets: t, field: string): t {
     ...targets,
     doc_targets:
       targets.doc_targets.map(
-        recordTargets =>
-          RecordTargets.withoutField(
-            recordTargets,
+        docTargets =>
+          DocTargets.withoutField(
+            docTargets,
             field)),
     schema: Schema.withoutField(targets.schema, field),
   };

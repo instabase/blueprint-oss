@@ -1,9 +1,11 @@
 import React from 'react';
 import ActionContext from 'studio/context/ActionContext';
+import SessionContext from 'studio/context/SessionContext';
 import DocListView from 'studio/components/DocListView';
 import {CollectionPlay, PlayBtn} from 'studio/components/StockSVGs';
 import useResource from 'studio/hooks/useResource';
 import * as Project from 'studio/state/project';
+import * as Handle from 'studio/state/handle';
 import assert from 'studio/util/assert';
 
 type Props = {
@@ -12,33 +14,36 @@ type Props = {
 
 export default function DocListPane({project}: Props) {
   const actionContext = React.useContext(ActionContext);
+  const sessionContext = React.useContext(SessionContext);
 
-  const recordNamesResource = useResource(
-    Project.activeRecordNames(project)
+  const docNamesResource = useResource(
+    Project.activeDocNames(
+      sessionContext.handle as Handle.t,
+      project)
   );
 
   // Janky, we could show "loading" better than this.
-  const recordNames =
-    recordNamesResource.status == 'Done' ?
-      recordNamesResource.value : [];
+  const docNames =
+    docNamesResource.status == 'Done' ?
+      docNamesResource.value : [];
 
-  const selectedRecordName = project.selectedRecordName;
+  const selectedDocName = project.selectedDocName;
   const model = Project.model(project);
   
   return (
-    <DocListView project={project} recordNames={recordNames}>
+    <DocListView project={project} docNames={docNames}>
       <div className="CornerButtons _high">
         <button
-          disabled={!selectedRecordName}
+          disabled={!selectedDocName}
           onClick={
             event => {
               event.stopPropagation();
               event.preventDefault();
-              assert(selectedRecordName);
+              assert(selectedDocName);
               actionContext.dispatchAction({
                 type: 'ScheduleModelRun',
                 modelIndex: project.currentModelIndex,
-                recordNames: [selectedRecordName],
+                docNames: [selectedDocName],
                 pin: false,
               });
             }
@@ -52,7 +57,7 @@ export default function DocListPane({project}: Props) {
           actionContext.dispatchAction({
             type: 'ScheduleModelRun',
             modelIndex: project.currentModelIndex,
-            recordNames,
+            docNames,
             pin: true,
           });
         }}>

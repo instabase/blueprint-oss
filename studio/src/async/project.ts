@@ -1,4 +1,5 @@
 import {Value as TheSessionContext} from 'studio/context/SessionContext';
+import * as Handle from 'studio/state/handle';
 import * as Project from 'studio/state/project';
 import * as Settings from 'studio/state/settings';
 import * as debug from 'studio/util/debug';
@@ -23,13 +24,14 @@ export type SaveProjectResult =
 ;
 
 export async function loadProject(
-  sessionContext: TheSessionContext,
-  projectPath: string):
+  handle: Handle.t):
     Promise<Project.t>
 {
-  const response = await fetch(
-    sessionContext.backendURL + '/read_file' + projectPath);
-  const project: Project.t = await response.json();
+  const fileHandle = await handle.getFileHandle('project.json');
+  const file = await fileHandle.getFile();
+  const text = await file.text();
+  console.log('Finished reading project contents', handle, fileHandle, file, text);
+  const project: Project.t = JSON.parse(text);
   return validate(project);
 }
 
@@ -58,17 +60,24 @@ function validate(project: Project.t): Project.t {
 }
 
 export async function saveProject(
-  sessionContext: TheSessionContext,
-  project: Project.t,
-  projectPath: string):
+  handle: Handle.t,
+  project: Project.t):
     Promise<SaveProjectResult>
 {
-  return fetch(sessionContext.backendURL + '/write_file' + projectPath, {
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(project),
-  }).then(
+  console.log('Saving', JSON.stringify(project));
+  return handle.getFileHandle('project.json').then(
+    fileHandle => fileHandle.createWritable()
+  ).then(
+    writableStream => (
+      writableStream.write(JSON.stringify(project)).then(
+        () => writableStream
+      )
+    )
+  ).then(
+    writableStream => writableStream.close()
+  ).then(
     (): SaveProjectDone => {
-      // console.debug('Save project done', sessionContext, project, projectPath);
+      // console.debug('Save project done', handle, project);
       return {
         status: 'SaveProjectDone',
         project,
@@ -77,7 +86,7 @@ export async function saveProject(
     }
   ).catch(
     error => {
-      console.error('Save project failed', sessionContext, project, projectPath, error);
+      console.error('Save project failed', handle, project, error);
       return { // Kinda janky that we resolve rather than reject here.
         status: 'SaveProjectFailed',
         project,

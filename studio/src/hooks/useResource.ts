@@ -39,6 +39,7 @@ export default function useResource<T>(promise: Promise<T> | undefined) {
       ).catch(
         e => {
           if (promise == lastPromiseRef.current) {
+            console.log('Error in resource', e);
             resultRef.current = {
               status: 'Failed',
               errorCode: -1,

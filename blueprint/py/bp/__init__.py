@@ -10,7 +10,6 @@ from .document import get_page_containing_entity, load_doc_from_json
 from .extraction import load_extraction_from_json
 from .ibocr_file import generate_doc_from_ibocr
 from .model import load_model_from_json
-from .record_blob import generate_doc_from_record_blob
 from .rule import all_rules_hold, any_rule_holds
 from .run import run_model
 from .synthesis.synthesize import synthesize_pattern_node

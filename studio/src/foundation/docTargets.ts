@@ -12,72 +12,72 @@ export type t = {
   notes: string | undefined;
 };
 
-export function build(recordName: string): t {
+export function build(docName: string): t {
   return {
-    doc_name: recordName,
+    doc_name: docName,
     assignments: [],
     doc_tags: [],
     notes: undefined,
   };
 }
 
-export function isEmpty(recordTargets: t): boolean {
-  return fields(recordTargets).length == 0;
+export function isEmpty(docTargets: t): boolean {
+  return fields(docTargets).length == 0;
 }
 
 export const fields = memo(
-  function(recordTargets: t): string[] {
-    return recordTargets.assignments.map(
+  function(docTargets: t): string[] {
+    return docTargets.assignments.map(
       ({field, value}) => field
     );
   }
 );
 
-export function hasValue(recordTargets: t, field: string): boolean {
-  return asDict(recordTargets)[field] != undefined;
+export function hasValue(docTargets: t, field: string): boolean {
+  return asDict(docTargets)[field] != undefined;
 }
 
-export function hasAllValues(recordTargets: t, fields: string[]): boolean {
-  return fields.every(field => hasValue(recordTargets, field));
+export function hasAllValues(docTargets: t, fields: string[]): boolean {
+  return fields.every(field => hasValue(docTargets, field));
 }
 
-export function hasNonNullValue(recordTargets: t, field: string): boolean {
-  const value = asDict(recordTargets)[field];
+export function hasNonNullValue(docTargets: t, field: string): boolean {
+  const value = asDict(docTargets)[field];
   return value != undefined && TargetValue.isNonNull(value);
 }
 
-export function hasAllNonNullValues(recordTargets: t, fields: string[]): boolean {
-  return fields.every(field => hasNonNullValue(recordTargets, field));
+export function hasAllNonNullValues(docTargets: t, fields: string[]): boolean {
+  return fields.every(field => hasNonNullValue(docTargets, field));
 }
 
-export function hasPositionedValue(recordTargets: t, field: string): boolean {
-  const value = asDict(recordTargets)[field];
+export function hasPositionedValue(docTargets: t, field: string): boolean {
+  const value = asDict(docTargets)[field];
   return value != undefined && TargetValue.isPositioned(value);
 }
 
-export function hasAllPositionedValues(recordTargets: t, fields: string[]): boolean {
-  return fields.every(field => hasPositionedValue(recordTargets, field));
+export function hasAllPositionedValues(docTargets: t, fields: string[]): boolean {
+  return fields.every(field => hasPositionedValue(docTargets, field));
 }
 
 export const asDict = memo(
   function(
-    recordTargets: t):
+    docTargets: t):
       Partial<Record<string, TargetValue.t>>
   {
     const result: Partial<Record<string, TargetValue.t>> = {};
-    recordTargets.assignments.forEach(
+    docTargets.assignments.forEach(
       ({field, value}) => result[field] = value
     );
     return result;
   }
 );
 
-export const asRecordNameDict = memo(
-  function(recordTargets: t[]):
+export const asDocNameDict = memo(
+  function(docTargets: t[]):
     Partial<Record<string, t>>
   {
     const result: Partial<Record<string, t>> = {};
-    recordTargets.forEach(
+    docTargets.forEach(
       forDoc => {
         result[forDoc.doc_name] = forDoc;
       }
@@ -88,21 +88,21 @@ export const asRecordNameDict = memo(
 
 export const value = memo(
   function(
-    recordTargets: t,
+    docTargets: t,
     field: string):
       TargetValue.t | undefined
   {
-    return asDict(recordTargets)[field];
+    return asDict(docTargets)[field];
   }
 );
 
 export function merged(existing: t[], provided: t[]): t[] {
-  const existingDict = asRecordNameDict(existing);
-  const providedDict = asRecordNameDict(provided);
-  const recordNames = new Set([...Object.keys(existingDict),
+  const existingDict = asDocNameDict(existing);
+  const providedDict = asDocNameDict(provided);
+  const docNames = new Set([...Object.keys(existingDict),
                             ...Object.keys(providedDict)]);
-  return [...recordNames].map(
-    recordName => mergedForDoc(existingDict[recordName], providedDict[recordName])
+  return [...docNames].map(
+    docName => mergedForDoc(existingDict[docName], providedDict[docName])
   );
 }
 
@@ -148,11 +148,11 @@ function mergeNotes(s1: string | undefined, s2: string | undefined): string | un
   }
 }
 
-export function withoutField(recordTargets: t, field: string): t {
+export function withoutField(docTargets: t, field: string): t {
   return {
-    ...recordTargets,
+    ...docTargets,
     assignments:
-      recordTargets.assignments.filter(
+      docTargets.assignments.filter(
         assignment => assignment.field != field),
   };
 }

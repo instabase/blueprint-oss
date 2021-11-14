@@ -2,7 +2,7 @@ import React from 'react';
 import {ErrorBoundary} from 'react-error-boundary';
 
 import ModalContext from 'studio/context/ModalContext';
-import SessionContext from 'studio/context/SessionContext';
+import SessionContext, {Value as TheSessionContext} from 'studio/context/SessionContext';
 import ActionContext from 'studio/context/ActionContext';
 import ProjectContext from 'studio/context/ProjectContext';
 
@@ -12,7 +12,7 @@ import MenuBar from 'studio/components/MenuBar';
 
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
-import * as ServerInfo from 'studio/state/serverInfo';
+import * as Handle from 'studio/state/handle';
 import mainReducer from 'studio/state/mainReducer';
 
 import useProject from 'studio/hooks/useProject';
@@ -20,7 +20,6 @@ import useModalContainer from 'studio/hooks/useModalContainer';
 import useIntegerColors from 'studio/hooks/useIntegerColors';
 import useLocalStorageState from 'studio/hooks/useLocalStorageState';
 import useModelRunner from 'studio/hooks/useModelRunner';
-import useRecentProjectsList from 'studio/hooks/useRecentProjectsList';
 
 import {saveProject} from 'studio/async/project';
 import {UUID, isString} from 'studio/util/types';
@@ -54,48 +53,18 @@ export default function App() {
 
   const [sessionUUID] = React.useState<UUID>(uuidv4());
 
-  const [projectPath, setProjectPath] =
-    useLocalStorageState<string | undefined>(
-      'Studio.LastProjectPath-v1',
-      undefined,
-      isProjectPath);
-
-  const [recentProjectPaths, setRecentProjectPaths] =
-    useRecentProjectsList();
-
-  React.useEffect(() => {
-    const MAX_RECENT_PROJECTS = 5;
-    if (projectPath != undefined) {
-      setRecentProjectPaths([
-        projectPath,
-        ...recentProjectPaths.filter(path => path != projectPath),
-      ].slice(0, MAX_RECENT_PROJECTS));
-    }
-  }, [projectPath]);
-
-  const [serverInfo, setServerInfo] =
-    React.useState<ServerInfo.t | undefined>();
+  const [handle, setHandle] = React.useState<Handle.t | undefined>(undefined);
 
   const sessionContext = React.useMemo(() => ({
     uuid: sessionUUID,
     backendURL: BACKEND_URL,
-    serverInfo,
-    projectPath,
-    setProjectPath,
+    handle,
+    setHandle,
   }), [
     sessionUUID,
-    serverInfo,
-    projectPath,
-    setProjectPath,
+    handle,
+    setHandle,
   ]);
-
-  React.useEffect(() => {
-    ServerInfo.get(BACKEND_URL).then(
-      (serverInfo: ServerInfo.t) => {
-        setServerInfo(serverInfo);
-      }
-    );
-  }, [setServerInfo]);
 
   // Project context
   // ---------------
@@ -138,20 +107,9 @@ export default function App() {
         sessionContext={sessionContext}
         actionContext={actionContext}
       />
-      {!sessionContext.serverInfo &&
-        <div className="CenteredStack">
-          <div className="CenteredText">
-            Loading server info. If this takes a long time,<br/>
-            check the browser dev tools log for errors.
-          </div>
-        </div>
-      }
-      {sessionContext.serverInfo &&
-        <MainViewLoader
-          projectResource={projectResource}
-          recentProjectPaths={recentProjectPaths}
-        />
-      }
+      <MainViewLoader
+        projectResource={projectResource}
+      />
       <StatusBar
         autosaverState={autosaverState}
       />
@@ -165,7 +123,6 @@ export default function App() {
 
 type MainViewLoaderProps = {
   projectResource: Resource.t<Project.t>;
-  recentProjectPaths: string[];
 };
 
 function MainViewLoader(props: MainViewLoaderProps) {
@@ -182,7 +139,6 @@ function MainViewLoader(props: MainViewLoaderProps) {
               ? props.projectResource.errorMessage
               : undefined
           }
-          recentProjectPaths={props.recentProjectPaths}
         />
       );
     case 'Loading':
@@ -201,7 +157,7 @@ function MainViewLoader(props: MainViewLoaderProps) {
           onReset={
             () => {
               console.error('Fatal error, resetting open project');
-              sessionContext.setProjectPath(undefined);
+              sessionContext.setHandle(undefined);
             }
           }
         >
@@ -245,7 +201,6 @@ function isProjectPath(o: unknown): o is string | undefined {
 
 type NoProjectLoadedViewProps = {
   error: string | undefined;
-  recentProjectPaths: string[];
 };
 
 function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
@@ -263,6 +218,46 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
           event => {
             event.stopPropagation();
             event.preventDefault();
+
+            alert('Please read these instructions carefully. ' +
+                  'The only supported browser is Chrome. ' +
+                  'On Chrome, these instructions span more than the height ' +
+                  'of this alert window, so please scroll down.\n\n' +
+                  'Select your project\'s root folder. ' +
+                  'This folder should already have in it two subdirectories: ' +
+                  'one called img/ containing your image samples, and ' +
+                  'one called ocr/ containing your OCR files.\n\n' +
+                  'The files in these folders must be named as follows: ' +
+                  'for every image img/foo.jpg, ' +
+                  'there must be a corresponding OCR file whose name is ' +
+                  'exactly ocr/foo.jpg.json.\n\n' +
+                  'Your images have to be JPEGs. If this is really annoying, ' +
+                  'it shouldn\'t be that hard to fix it in the source. ' +
+                  'You just have to put the right thing (instead of "jpg") ' +
+                  'into the img.src line in the loadImage source file.\n\n' +
+                  'Your project file will be called project.json. ' +
+                  'It is not possible to pick another name. ' +
+                  'As a consequence, you cannot have multiple projects ' +
+                  'working with the same image/OCR samples. ' +
+                  'To do so, make a copy of your sample data.');
+          }
+        }
+      >
+        Instructions (important)
+      </button>
+    </div>
+
+    <div className="SimpleHorizontalStack">
+      <button
+        onClick={
+          event => {
+            event.stopPropagation();
+            event.preventDefault();
+            console.log('Beginning create new project interaction');
+            // @ts-ignore
+            window.showDirectoryPicker().then(
+              (handle: any) => runNewProjectModalInteraction(
+                handle as (Handle.t | undefined), sessionContext));
           }
         }
       >
@@ -270,36 +265,101 @@ function NoProjectLoadedView(props: NoProjectLoadedViewProps) {
       </button>
     </div>
 
+    <div className="SimpleHorizontalStack">
+      <button
+        onClick={
+          event => {
+            event.stopPropagation();
+            event.preventDefault();
+
+            console.log('Beginning load project interaction');
+
+            // @ts-ignore
+            window.showDirectoryPicker().then(
+              (handle: Handle.t | undefined) => {
+                if (!handle) {
+                  console.log('User did not select a project foler, aborting');
+                  return;
+                }
+
+                handle.getFileHandle('project.json').then(
+                  fileHandle => {
+                    console.log('Found project.json, loading project');
+                    sessionContext.setHandle(handle);
+                  }
+                ).catch(
+                  error => {
+                    console.log('Error looking for project.json', error);
+                    alert('Error: could not find project.json.\n\n' +
+                          'Please select a folder which contains a ' +
+                          'project.json file, or click "New project..."');
+                  }
+                );
+              }
+            );
+          }
+        }
+      >
+        Open project folder...
+      </button>
+    </div>
+
     {props.error &&
       <div className="CenteredText DisallowUserSelection">
-        Error loading project at<br/>
-        {sessionContext.projectPath}:<br />
+        Error loading project<br/>
         {props.error}
       </div>
     }
-
-    {props.recentProjectPaths.length > 0 &&
-      <>
-        <div className="CenteredText DisallowUserSelection">
-          Recent projects
-        </div>
-
-        {props.recentProjectPaths.map(
-          projectPath => (
-            <button
-              onClick={
-                event => {
-                  event.stopPropagation();
-                  event.preventDefault();
-                  sessionContext.setProjectPath(projectPath);
-                }
-              }
-            >
-              {projectPath}
-            </button>
-          )
-        )}
-      </>
-    }
   </div>;
+}
+
+async function runNewProjectModalInteraction(
+    handle: Handle.t | undefined,
+    sessionContext: TheSessionContext)
+{
+  // @ts-ignore
+  if (!handle) {
+    console.log('No dir handle, returning');
+    return;
+  }
+  console.log('Got directory from user', handle.entries());
+
+  const entries = new Map<any, any>();
+  for await (let [k, v] of handle.entries()) {
+    entries.set(k, v);
+  }
+  console.log('Got contents of directory', entries);
+
+  const projectFileName = 'project.json';
+  if (entries.has(projectFileName)) {
+    const error = 'Error: Chosen directory already has a project.json file';
+    console.log(error);
+    alert(error);
+    return;
+  }
+
+  const imagesDirName = 'img';
+  if (entries.get(imagesDirName)?.kind != 'directory') {
+    const error = 'Error: Images directory not found';
+    console.log(error);
+    alert(error);
+    return;
+  }
+  console.log('Got images dir name', imagesDirName);
+
+  const ocrDirName = 'ocr';
+  if (entries.get(ocrDirName)?.kind != 'directory') {
+    const error = 'Error: OCR directory not found';
+    console.log(error);
+    alert(error);
+    return;
+  }
+  console.log('Got OCR dir name', ocrDirName);
+
+  await handle.getFileHandle('project.json', {create: true});
+  await saveProject(handle, Project.build());
+
+  console.log('Done building new project, setting session handle...');
+
+  sessionContext.setHandle(handle);
 }

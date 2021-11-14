@@ -1,7 +1,7 @@
 import React from 'react';
 
 import * as Doc from 'studio/foundation/doc';
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 
 import * as Model from 'studio/blueprint/model';
 import * as Node from 'studio/blueprint/node';
@@ -9,7 +9,8 @@ import * as PatternNode from 'studio/blueprint/patternNode';
 import * as PickBestNode from 'studio/blueprint/pickBestNode';
 import * as MergeNode from 'studio/blueprint/mergeNode';
 
-import * as NodeRecordTargets from 'studio/state/nodeRecordTargets';
+import * as Handle from 'studio/state/handle';
+import * as NodeDocTargets from 'studio/state/nodeDocTargets';
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
 
@@ -90,14 +91,14 @@ function getState(props: Props): State {
   const model = Project.model(props.project);
   const path = props.project.selectedNodeModelPath;
   const node = path ? Model.node(model, path) : undefined;
-  const recordName = props.project.selectedRecordName;
-  const targets = Project.nodeRecordTargets(props.project, node);
+  const docName = props.project.selectedDocName;
+  const targets = Project.nodeDocTargets(props.project, node);
   const extractions = props.extractions;
 
-  const docPromise = recordName
+  const docPromise = docName
     ? loadDoc(
-        project.samplesPath,
-        recordName,
+        sessionContext.handle as Handle.t,
+        docName,
         Project.blueprintSettings(props.project),
         sessionContext,
       )
@@ -115,7 +116,7 @@ function getState(props: Props): State {
         state: 'PatternNodeSelected',
         props: {
           project,
-          recordName, doc, targets,
+          docName, doc, targets,
           model, node, path,
           extractions,
         },
@@ -125,7 +126,7 @@ function getState(props: Props): State {
         state: 'PickBestNodeSelected',
         props: {
           project,
-          recordName, doc, targets,
+          docName, doc, targets,
           model, node, path,
           extractions,
         },
@@ -135,7 +136,7 @@ function getState(props: Props): State {
         state: 'MergeNodeSelected',
         props: {
           project,
-          recordName, doc, targets,
+          docName, doc, targets,
           model, node, path,
           extractions,
         },

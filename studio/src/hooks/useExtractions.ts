@@ -12,12 +12,12 @@ export type Extractions = DropdownProps<Scoring.ScoredExtraction>;
 
 export default function useExtractions(project: Project.t): Extractions {
   const model = Project.model(project);
-  const recordName = project.selectedRecordName;
+  const docName = project.selectedDocName;
   const node = Project.selectedNode(project);
   const results =
     ModelRun.resultsForDoc(
       Project.modelRunsForCurrentModel(project),
-      project.selectedRecordName);
+      project.selectedDocName);
   const extractions =
     (node &&
      results &&

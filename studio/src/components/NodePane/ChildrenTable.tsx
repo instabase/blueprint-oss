@@ -4,7 +4,7 @@ import ActionContext from 'studio/context/ActionContext';
 import TableView from 'studio/components/TableView';
 import {MagicWand, Plus, Trash2} from 'studio/components/StockSVGs';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Doc from 'studio/foundation/doc';
 import * as TargetValue from 'studio/foundation/targetValue';
 
@@ -13,7 +13,7 @@ import * as Node from 'studio/blueprint/node';
 import * as PatternNode from 'studio/blueprint/patternNode';
 import * as Results from 'studio/blueprint/results';
 
-import * as NodeRecordTargets from 'studio/state/nodeRecordTargets';
+import * as NodeDocTargets from 'studio/state/nodeDocTargets';
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
 
@@ -38,7 +38,7 @@ export default function ChildrenTable(props: Props) {
       childPath: props.path.concat([child.uuid]) as Nonempty<string[]>,
       bestExtractionScore:
         Results.bestExtractionScore(
-          Project.resultsForCurrentModelAndSelectedRecordName(
+          Project.resultsForCurrentModelAndSelectedDocName(
             props.project),
           child),
     }))}

@@ -2,6 +2,8 @@
   "compilerOptions": {
     "target": "es2019",
 
+    "incremental": true,
+
     "moduleResolution": "node",
     "esModuleInterop": true,
     "resolveJsonModule": true,
@@ -12,7 +14,8 @@
     "baseUrl": ".",
     "paths": {
       "studio/*": ["./src/*"]
-    }
+    },
+    "outDir": "incremental_build_artifacts"
   },
   "include": [
     "src/main.tsx"

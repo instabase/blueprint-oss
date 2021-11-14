@@ -2,6 +2,7 @@
 
 pushd blueprint
 bash ./mypy.sh
+bash ./tests.sh
 popd
 
 pushd server

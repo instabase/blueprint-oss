@@ -3,7 +3,7 @@ import memo from 'memoizee';
 import * as Entity from 'studio/foundation/entity';
 import * as Targets from 'studio/foundation/targets';
 import * as Schema from 'studio/foundation/targetsSchema';
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 
 export type Entry = {
   field: string;
@@ -65,11 +65,11 @@ export function filter(
 
 export function fieldValuePairs(
   schema: t,
-  recordTargets: RecordTargets.t):
+  docTargets: DocTargets.t):
     Targets.FieldValuePair[]
 {
   return fields(schema).map(
-    field => [field, RecordTargets.value(recordTargets, field)]);
+    field => [field, DocTargets.value(docTargets, field)]);
 }
 
 export function fieldToTypeMap(

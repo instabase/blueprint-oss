@@ -1,6 +1,6 @@
 import React from 'react';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Entity from 'studio/foundation/entity';
 import * as Doc from 'studio/foundation/doc';
 import * as TargetValue from 'studio/foundation/targetValue';
@@ -34,7 +34,7 @@ export default function AnnotateFieldsTable(props: Props) {
         ({field}) => ({
           field,
           targetValue:
-            Project.targetValueForSelectedRecordName(
+            Project.targetValueForSelectedDocName(
               props.project,
               field),
         })
@@ -84,12 +84,12 @@ export default function AnnotateFieldsTable(props: Props) {
             name: 'Target value',
             fractionalWidth: 1,
             cellContents: (row: RowProps) => {
-              const recordName = props.project.selectedRecordName;
-              if (recordName != undefined) {
+              const docName = props.project.selectedDocName;
+              if (docName != undefined) {
                 return (
                   <TargetValueCell
                     {...row}
-                    recordName={recordName}
+                    docName={docName}
                     value={row.targetValue}
                     isSelected={Project.selectedField(props.project) == row.field}
                   />

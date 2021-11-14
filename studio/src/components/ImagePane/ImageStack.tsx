@@ -4,7 +4,7 @@ import Image from 'studio/components/ImagePane/Image';
 
 import * as Transform from 'studio/util/zoomAndPanTransform';
 
-import {Layouts} from 'studio/async/loadRecords';
+import {Layouts} from 'studio/async/loadDocs';
 
 import './ImageStack.css';
 
@@ -42,7 +42,7 @@ export default (props: Props) => {
           layout => (
             <Image
               layout={layout}
-              key={layout.processed_image_path}
+              key={layout.file_name}
             />
           ),
         )

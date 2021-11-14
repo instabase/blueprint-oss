@@ -6,8 +6,8 @@ import {Value as TheSessionContext} from 'studio/context/SessionContext';
 import * as Project from 'studio/state/project';
 import * as Settings from 'studio/state/settings';
 
-import {loadResponse, loadRecordBlob} from 'studio/async/loadRecords';
-import {loadImageAsBlob} from 'studio/async/loadImage';
+import {loadResponse, loadDocBlob} from 'studio/async/loadDocs';
+// import {loadImageAsBlob} from 'studio/async/loadImage';
 import loadDoc from 'studio/async/loadDoc';
 
 export default async function makeDebugBundle(
@@ -15,35 +15,40 @@ export default async function makeDebugBundle(
   sessionContext: TheSessionContext,
 ): Promise<void>
 {
+  alert('Not implemented');
+
+  // If you want to fix this, be my guest.
+
+  /*
   const bundleName = `StudioDebugData-${new Date().toISOString()}`;
 
   console.log('Building debug data');
 
   let zip = new JSZip();
 
-  console.log('Adding load_records response');
+  console.log('Adding load_docs response');
   zip.file(
-    `${bundleName}/loadRecordsResponse.json`,
+    `${bundleName}/loadDocsResponse.json`,
     JSON.stringify(
       await loadResponse(project.samplesPath),
     ),
   );
 
-  const recordName = project.selectedRecordName;
+  const docName = project.selectedDocName;
 
-  if (recordName) {
-    console.log('Adding record blob for selected doc from load_records');
-    const recordBlob = await loadRecordBlob(
+  if (docName) {
+    console.log('Adding doc blob for selected doc from load_docs');
+    const docBlob = await loadDocBlob(
       project.samplesPath,
-      recordName,
+      docName,
     );
     zip.file(
-      `${bundleName}/recordBlob_loadRecords_selectedDoc.json`,
-      JSON.stringify(recordBlob),
+      `${bundleName}/docBlob_loadDocs_selectedDoc.json`,
+      JSON.stringify(docBlob),
     );
 
     console.log('Adding images for selected doc');
-    for (let [page_number, layout] of Object.entries(recordBlob.layouts)) {
+    for (let [page_number, layout] of Object.entries(docBlob.layouts)) {
       const imageBlob = await loadImageAsBlob(layout.processed_image_path);
       zip.file(
         `${bundleName}/image_selectedDoc_page_${page_number}.jpg`,
@@ -56,9 +61,9 @@ export default async function makeDebugBundle(
       `${bundleName}/selectedDoc.json`,
       JSON.stringify(
         await (
-          recordName && loadDoc(
+          docName && loadDoc(
             project.samplesPath,
-            recordName,
+            docName,
             Project.blueprintSettings(project),
             sessionContext,
           )
@@ -104,4 +109,5 @@ export default async function makeDebugBundle(
   );
 
   console.log('Done generating debug data');
+  */
 }

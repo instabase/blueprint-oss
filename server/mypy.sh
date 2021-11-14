@@ -8,4 +8,5 @@ export SERVER_PATH="$REPO_PATH/server"
 export PYTHONPATH="$BLUEPRINT_PATH/py:$SERVER_PATH/py"
 export MYPYPATH="$PYTHONPATH"
 
-python3 -m mypy py/bp_server/*.py
+echo $MYPYPATH
+python3 -m mypy -m bp_server

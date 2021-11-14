@@ -2,3 +2,5 @@
 node_modules
 yarn-error.log
 dist
+tsconfig.tsbuildinfo
+incremental_build_artifacts

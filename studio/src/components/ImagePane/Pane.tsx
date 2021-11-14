@@ -18,7 +18,7 @@ import TargetValuesOverlay from 'studio/components/ImagePane/TargetValuesOverlay
 import ExtractedValuesOverlay from 'studio/components/ImagePane/ExtractedValuesOverlay';
 
 import * as ModelRun from 'studio/state/modelRun';
-import * as NodeRecordTargets from 'studio/state/nodeRecordTargets';
+import * as NodeDocTargets from 'studio/state/nodeDocTargets';
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
 
@@ -28,13 +28,13 @@ import useZoomAndPanTransform from 'studio/hooks/useZoomAndPanTransform';
 
 import {isBoolean} from 'studio/util/types';
 
-import {Layouts} from 'studio/async/loadRecords';
+import {Layouts} from 'studio/async/loadDocs';
 
 import './Pane.css';
 
 type Props = {
   project: Project.t;
-  recordName: string;
+  docName: string;
   doc: Doc.t | undefined;
   layouts: Layouts;
   extraction: Extraction.t | undefined;
@@ -45,12 +45,12 @@ export default function Pane(props: Props) {
 
   const [transform, setTransform] =
     useZoomAndPanTransform(
-      props.project.uuid + props.recordName);
+      props.project.uuid + props.docName);
 
   const targets =
-    Project.recordTargets(
+    Project.docTargets(
       props.project,
-      props.recordName);
+      props.docName);
 
   const defaultEntityTypeOptions =
     React.useMemo(() => {
@@ -93,7 +93,7 @@ export default function Pane(props: Props) {
       >
         <TargetPicker
           project={props.project}
-          recordName={props.recordName}
+          docName={props.docName}
           doc={props.doc}
         >
           <ImageStack
@@ -103,7 +103,7 @@ export default function Pane(props: Props) {
             {props.doc &&
               <DocEntitiesOverlay
                 project={props.project}
-                recordName={props.recordName}
+                docName={props.docName}
                 doc={props.doc}
                 entityTypeOptions={entityTypeOptions}
               />
@@ -112,7 +112,7 @@ export default function Pane(props: Props) {
             {targets &&
               <TargetValuesOverlay
                 project={props.project}
-                recordName={props.recordName}
+                docName={props.docName}
                 targets={targets}
                 targetValuesChecked={targetValuesChecked}
               />
@@ -161,8 +161,8 @@ function progressWidgetProps(
   return ModelRun.pendingModelRuns(project.modelRuns).map(
     modelRun => ({
       taskUUID: modelRun.uuid,
-      numerator: ModelRun.numFinalizedRecordRuns(modelRun),
-      denominator: ModelRun.numRecordRuns(modelRun),
+      numerator: ModelRun.numFinalizedDocRuns(modelRun),
+      denominator: ModelRun.numDocRuns(modelRun),
       onCancel: () => {
         actionContext.dispatchAction({
           type: 'CancelModelRun',

@@ -1,6 +1,6 @@
 import memo from 'memoizee';
 
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Entity from 'studio/foundation/entity';
 import * as Extraction from 'studio/foundation/extraction';
 import * as ExtractionPoint from 'studio/foundation/extractionPoint';
@@ -13,19 +13,19 @@ import * as PatternNode from 'studio/blueprint/patternNode';
 
 import * as SpacePartition from 'studio/util/spacePartition';
 
-import makeRecordSpacePartition from 'studio/util/makeRecordSpacePartition';
+import makeDocSpacePartition from 'studio/util/makeDocSpacePartition';
 
 import assert from 'studio/util/assert';
 
 export const build = memo(
   function(
     doc: Doc.t,
-    recordTargets: RecordTargets.t,
+    docTargets: DocTargets.t,
     targetsSchema: TargetsSchema.t):
       Extraction.t
   {
     const assignments: ExtractionPoint.t[] = [];
-    for (let {field, value} of recordTargets.assignments) {
+    for (let {field, value} of docTargets.assignments) {
       if (TargetValue.isPositioned(value)) {
         const percentageBBox = TargetValue.bbox(value);
         const bbox = Doc.absoluteBBox(doc, percentageBBox);
@@ -36,7 +36,7 @@ export const build = memo(
           throw `Target field ${field} not present in target schema`;
         }
 
-        const partition = makeRecordSpacePartition(doc, type);
+        const partition = makeDocSpacePartition(doc, type);
 
         for (let entity of SpacePartition.getIntersecting(partition, bbox)) {
           if (Entity.text(entity) == value.text) {
@@ -55,12 +55,12 @@ export const buildComplete = memo(
   function(
     doc: Doc.t,
     node: PatternNode.t,
-    recordTargets: RecordTargets.t,
+    docTargets: DocTargets.t,
     targetsSchema: TargetsSchema.t):
       Extraction.t | undefined
   {
-    const extraction = build(doc, recordTargets, targetsSchema);
-    if (isComplete(extraction, node, recordTargets)) {
+    const extraction = build(doc, docTargets, targetsSchema);
+    if (isComplete(extraction, node, docTargets)) {
       return extraction;
     }
   },
@@ -70,7 +70,7 @@ export const buildComplete = memo(
 function isComplete(
   extraction: Extraction.t,
   node: PatternNode.t,
-  recordTargets: RecordTargets.t):
+  docTargets: DocTargets.t):
     boolean
 {
   // If any of this node's fields has a target value which is null or undefined,
@@ -81,7 +81,7 @@ function isComplete(
   // for every target value, and each of the node's fields has a target value.
   
   for (let field of Node.fields(node)) {
-    if (!RecordTargets.hasPositionedValue(recordTargets, field)) {
+    if (!DocTargets.hasPositionedValue(docTargets, field)) {
       return false;
     } else if (!Extraction.has(extraction, field)) {
       return false;

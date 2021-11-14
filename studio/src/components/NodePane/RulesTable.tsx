@@ -8,7 +8,7 @@ import {Edit2, Plus, Trash2, MagicWand} from 'studio/components/StockSVGs';
 import EditRuleDialog from './EditRuleDialog';
 
 import * as Doc from 'studio/foundation/doc';
-import * as RecordTargets from 'studio/foundation/recordTargets';
+import * as DocTargets from 'studio/foundation/docTargets';
 import * as Extraction from 'studio/foundation/extraction';
 import * as TargetsSchema from 'studio/foundation/targetsSchema';
 
@@ -20,7 +20,7 @@ import * as Rule from 'studio/blueprint/rule';
 import * as Scoring from 'studio/blueprint/scoring';
 import * as WiifNode from 'studio/blueprint/wiifNode';
 
-import * as NodeRecordTargets from 'studio/state/nodeRecordTargets';
+import * as NodeDocTargets from 'studio/state/nodeDocTargets';
 import * as Project from 'studio/state/project';
 import * as Resource from 'studio/state/resource';
 import * as Settings from 'studio/state/settings';
@@ -53,7 +53,7 @@ export default function RulesTable(props: Props) {
       props.project.targets.schema);
 
   const wiifPromise = 
-    props.recordName && props.doc && targetExtraction
+    props.docName && props.doc && targetExtraction
     ? wiif(
         props.doc,
         props.node,
@@ -88,7 +88,7 @@ export default function RulesTable(props: Props) {
 
     if (
       Node.numFields(props.node) > 0 &&
-      props.recordName != undefined &&
+      props.docName != undefined &&
       props.doc != undefined &&
       props.targets != undefined &&
       targetExtraction != undefined
@@ -96,8 +96,8 @@ export default function RulesTable(props: Props) {
       const targetsSchema = TargetsSchema.filter(
         props.project.targets.schema,
         field => (
-          RecordTargets.hasValue(
-            props.targets as RecordTargets.t,
+          DocTargets.hasValue(
+            props.targets as DocTargets.t,
             field
           )
         ),
@@ -106,7 +106,7 @@ export default function RulesTable(props: Props) {
       return () => reallyRunSynthesis(
         props.node,
         props.path,
-        props.recordName as string,
+        props.docName as string,
         props.doc as Doc.t,
         targetExtraction,
         targetsSchema,
@@ -119,7 +119,7 @@ export default function RulesTable(props: Props) {
   }, [
     props.node,
     props.path,
-    props.recordName,
+    props.docName,
     props.doc,
     props.targets,
     props.project.targets.schema,
@@ -241,11 +241,11 @@ export default function RulesTable(props: Props) {
           cellContents: (row: RowProps) => {
             const score = row.wiifScore;
 
-            const recordTargets = props.targets;
+            const docTargets = props.targets;
             const anyFieldUnknown =
-              recordTargets == undefined ||
-              !RecordTargets.hasAllValues(
-                recordTargets, [...Rule.fields(row.rule)]);
+              docTargets == undefined ||
+              !DocTargets.hasAllValues(
+                docTargets, [...Rule.fields(row.rule)]);
 
             const className = () => {
               if (anyFieldUnknown) {
@@ -535,7 +535,7 @@ function showAddConstraintDialog(
 function reallyRunSynthesis(
   node: Node.t,
   nodePath: Model.Path,
-  recordName: string,
+  docName: string,
   doc: Doc.t,
   targetExtraction: Extraction.t,
   targetsSchema: TargetsSchema.t,

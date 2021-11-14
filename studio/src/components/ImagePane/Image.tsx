@@ -5,7 +5,7 @@ import useResource from 'studio/hooks/useResource';
 
 import * as Transform from 'studio/util/zoomAndPanTransform';
 
-import {Layout} from 'studio/async/loadRecords';
+import {Layout} from 'studio/async/loadDocs';
 import loadImage from 'studio/async/loadImage';
 
 type Props = {
@@ -18,7 +18,7 @@ export default ({layout}: Props) => {
     height: layout.height,
   };
 
-  const imagePromise = loadImage(layout.processed_image_path);
+  const imagePromise = loadImage(layout.file_handle);
   const imageResource = useResource(imagePromise);
 
   const ref = useDivRef();

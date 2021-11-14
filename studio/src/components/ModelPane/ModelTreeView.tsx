@@ -240,7 +240,7 @@ function rowProps(node: Node.t, nodePath: Model.Path, project: Project.t): RowPr
     path: nodePath,
     bestExtractionScore:
       Results.bestExtractionScore(
-        Project.resultsForCurrentModelAndSelectedRecordName(
+        Project.resultsForCurrentModelAndSelectedDocName(
           project),
         node),
   };

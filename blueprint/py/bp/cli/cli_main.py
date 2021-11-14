@@ -9,11 +9,13 @@ from sys import stderr
 from typing import Optional
 
 from ..bp_logging import configure_cli_logging
+from ..config import Config
+from ..tree import Node
+
+from .gen_bp_doc import init_gen_bp_doc
 from .run_model import init_run_model
 from .synthesis import init_synthesis
 from .wiif import init_wiif
-from ..config import Config
-from ..tree import Node
 
 
 def bp_cli_main(root: Optional[Node] = None,
@@ -26,6 +28,7 @@ def bp_cli_main(root: Optional[Node] = None,
 
   subparsers = parser.add_subparsers()
 
+  init_gen_bp_doc(subparsers)
   init_run_model(subparsers)
   init_synthesis(subparsers)
   init_wiif(subparsers)

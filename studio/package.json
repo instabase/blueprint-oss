@@ -44,7 +44,7 @@
   "scripts": {
     "start-dev-server": "webpack serve --mode development",
     "start": "concurrently 'yarn start-dev-server' 'yarn type-check-watch'",
-    "type-check": "tsc --noEmit",
+    "type-check": "tsc",
     "type-check-watch": "yarn type-check --watch --preserveWatchOutput"
   }
 }

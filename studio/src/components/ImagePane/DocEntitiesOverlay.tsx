@@ -13,7 +13,7 @@ import assert from 'studio/util/assert';
 
 type Props = {
   project: Project.t;
-  recordName: string;
+  docName: string;
   doc: Doc.t;
   entityTypeOptions: Options;
 };
@@ -49,7 +49,7 @@ export default function EntitiesOverlay(props: Props) {
 
   return <>
     {entityTypesToShow.map(entityType => (
-      <React.Fragment key={props.recordName + '-' + entityType}>
+      <React.Fragment key={props.docName + '-' + entityType}>
         {
           Doc.entitiesHavingType(props.doc, entityType as Entity.Type)
             .filter(entityFilter)
