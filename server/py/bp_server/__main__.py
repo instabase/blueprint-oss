@@ -13,6 +13,7 @@ from bp.config import Config
 from bp.document import load_doc_from_json
 from bp.extraction import load_extraction_from_json
 from bp.google_ocr_file import generate_doc_from_google_ocr_json
+from bp.hocr_file import load_doc_from_hocr_string
 from bp.model import load_model_from_json
 from bp.run import run_model
 from bp.synthesis.synthesize import synthesize_pattern_node
@@ -45,9 +46,18 @@ def handle_bad_request(e: Exception) -> Tuple[Response, int]:
 def gen_bp_doc() -> Any:
   try:
     payload: Dict[str, Any] = request.get_json(force=True) # type: ignore
-    google_ocr_json = payload['google_ocr']
-    doc = generate_doc_from_google_ocr_json(
-            google_ocr_json, 'random_document_name')
+    google_ocr_json = payload.get('google_ocr', None)
+    tesseract_ocr_string = payload.get('tesseract_ocr', None)
+
+    if google_ocr_json and tesseract_ocr_string:
+      print('Warning: got both Google and Tesseract OCR; using Google')
+
+    if google_ocr_json:
+      doc = generate_doc_from_google_ocr_json(
+              google_ocr_json, 'random_document_name')
+    else:
+      doc = load_doc_from_hocr_string(tesseract_ocr_string)
+
     return jsonify({'doc': asdict(doc)})
 
   except Exception as e:
