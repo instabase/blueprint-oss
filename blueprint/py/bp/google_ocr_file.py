@@ -60,5 +60,7 @@ def generate_doc_from_google_ocr_json(raw_json: Dict, name: str) -> Document:
 
 
 def load_doc_from_google_ocr(path: Path) -> Document:
-  with path.open() as f:
-    return generate_doc_from_google_ocr_json(json.load(f), path.stem)
+  with path.open('rb') as f:
+    f_str = f.read()
+    data = f_str.decode("utf-8", errors='ignore')
+    return generate_doc_from_google_ocr_json(json.loads(data), path.stem)
