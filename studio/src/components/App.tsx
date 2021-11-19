@@ -348,13 +348,16 @@ async function runNewProjectModalInteraction(
   console.log('Got images dir name', imagesDirName);
 
   const ocrDirName = 'ocr';
-  if (entries.get(ocrDirName)?.kind != 'directory') {
-    const error = 'Error: OCR directory not found';
+  const hocrDirName = 'hocr';
+  if (entries.get(ocrDirName)?.kind != 'directory' &&
+      entries.get(hocrDirName)?.kind != 'directory')
+  {
+    const error = 'Error: found neither OCR nor HOCR directory';
     console.log(error);
     alert(error);
     return;
   }
-  console.log('Got OCR dir name', ocrDirName);
+  console.log('Got OCR dir name; one of:', ocrDirName, hocrDirName);
 
   await handle.getFileHandle('project.json', {create: true});
   await saveProject(handle, Project.build());

@@ -7,13 +7,22 @@ import {Value as TheSessionContext} from 'studio/context/SessionContext';
 import {stringify, writeString} from 'studio/util/stringifyForPython';
 import * as Handle from 'studio/state/handle';
 
-async function onDiskDocFileHandle(
+async function onDiskGoogleOCRFileHandle(
   handle: Handle.t,
   docName: string):
     Promise<Handle.FileHandle>
 {
   const subdirHandle = await handle.getDirectoryHandle('ocr');
   return subdirHandle.getFileHandle(`${docName}.json`);
+}
+
+async function onDiskTesseractOCRFileHandle(
+  handle: Handle.t,
+  docName: string):
+    Promise<Handle.FileHandle>
+{
+  const subdirHandle = await handle.getDirectoryHandle('hocr');
+  return subdirHandle.getFileHandle(`${docName}.hocr`);
 }
 
 async function rawLoadDoc(
@@ -23,12 +32,30 @@ async function rawLoadDoc(
   sessionContext: TheSessionContext):
     Promise<Doc.t>
 {
-  const fileHandle = await onDiskDocFileHandle(handle, docName);
-  console.log('Got filehandle for doc', fileHandle);
-  const file = await fileHandle.getFile();
-  const text = await file.text();
-  const googleOCR = JSON.parse(text);
-  console.log('Loaded raw Google OCR doc', googleOCR);
+  let googleOCR: any;
+  let tesseractOCR: any;
+
+  try {
+    const fileHandle = await onDiskGoogleOCRFileHandle(handle, docName);
+    console.log('Got Google OCR filehandle for doc', fileHandle);
+    const file = await fileHandle.getFile();
+    const text = await file.text();
+    googleOCR = JSON.parse(text);
+    console.log('Loaded raw Google OCR doc', googleOCR);
+  } catch {
+    console.log('Did not find Google OCR data');
+  }
+
+  try {
+    const fileHandle = await onDiskTesseractOCRFileHandle(handle, docName);
+    console.log('Got Tesseract OCR filehandle for doc', fileHandle);
+    const file = await fileHandle.getFile();
+    const text = await file.text();
+    tesseractOCR = text;
+    console.log('Loaded raw Tesseract OCR doc', tesseractOCR);
+  } catch {
+    console.log('Did not find Tesseract OCR data');
+  }
 
   const endpoint = 'gen_bp_doc';
   console.log(`Hitting ${endpoint}`, handle, docName);
@@ -36,7 +63,8 @@ async function rawLoadDoc(
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({
-      'google_ocr': googleOCR
+      'google_ocr': googleOCR,
+      'tesseract_ocr': tesseractOCR,
     }),
   });
   const responseJSON = await response.json();

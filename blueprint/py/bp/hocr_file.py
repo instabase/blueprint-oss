@@ -70,3 +70,11 @@ def load_doc_from_hocr(path: Path) -> Document:
   if not abs_path.is_file():
     raise ValueError(f"Input path {path} is not a file")
   return generate_doc_from_hocr(HOCRDocument(str(abs_path)).body, path.stem)
+
+
+def load_doc_from_hocr_string(text: str) -> Document:
+  import tempfile
+  file = tempfile.NamedTemporaryFile()
+  with open(file.name, 'w') as fd:
+    fd.write(text)
+  return load_doc_from_hocr(Path(file.name))

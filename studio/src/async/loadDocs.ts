@@ -65,11 +65,12 @@ export async function rawLoadResponse(handle: Handle.t): Promise<Response> {
   }
   console.log('Done loading image data', blob);
 
-  const ocrFilesHandle = await handle.getDirectoryHandle('ocr');
-  for await (let [ocrFileName, ocrFileHandle] of ocrFilesHandle.entries()) {
-    // ...
-  }
-  console.log('Done loading ocr data', blob);
+  // OCR data gets loaded elsewhere, in loadDoc.
+  // const ocrFilesHandle = await handle.getDirectoryHandle('ocr');
+  // for await (let [ocrFileName, ocrFileHandle] of ocrFilesHandle.entries()) {
+  //   ...
+  // }
+  // console.log('Done loading ocr data', blob);
 
   return blob;
 }
