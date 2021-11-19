@@ -19,14 +19,14 @@ def timeout(timeout: int, f: Callable[[], Any]) -> Any:
     bp_logging.info('Handling timeout')
     raise TimeoutError
 
-  handler = getsignal(SIGALRM)
-  if handler != SIG_DFL:
-    raise RuntimeError('attempted to use SIGALRM to wrap a function timeout, '
-      f'but {handler} is already registered as a SIGALRM handler')
+  # handler = getsignal(SIGALRM)
+  # if handler != SIG_DFL:
+  #   raise RuntimeError('attempted to use SIGALRM to wrap a function timeout, '
+  #     f'but {handler} is already registered as a SIGALRM handler')
 
   try:
-    signal(SIGALRM, handle_timeout)
-    alarm(timeout)
+    # signal(SIGALRM, handle_timeout)
+    # alarm(timeout)
     return f()
   finally:
     signal(SIGALRM, SIG_DFL)
