@@ -76,8 +76,8 @@ npm install
 Blueprint provides a command-line interface. To run on a sample paystub:
 
 ```
-cd blueprint/reference_extractions/paystubs
-python3 paystubs.py run_model -v -g ocr/sample_paystub.jpg.json
+cd examples/paystubs
+python3 paystubs.py run_model -v -g ocr/*
 ```
 
 To generate OCR for your own document samples, see:
@@ -124,9 +124,8 @@ Once you have started both the frontend and backend servers, open a browser to
 `http://localhost:3000`. You should see the Studio welcome screen.
 
 Click on the instructions button and read the instructions carefully. You can
-make a copy of the `blueprint-oss/reference_extractions/paystubs` directory and
-use the copy as your project directory -- then you should be able to view two
-sample paystubs in the GUI.
+make a copy of the `examples/paystubs` directory and use the copy as your
+project directory -- then you should be able to view sample paystubs in the GUI.
 
 Studio does not use Python-based Blueprint programs (for example, the reference
 extraction program `paystubs.py`). You will need to make a new model.
