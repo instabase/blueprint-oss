@@ -129,3 +129,14 @@ project directory -- then you should be able to view sample paystubs in the GUI.
 
 Studio does not use Python-based Blueprint programs (for example, the reference
 extraction program `paystubs.py`). You will need to make a new model.
+
+## Themes
+
+There are two color schemes available for Studio. Toggling between
+them must be done manually. The default is the light color scheme. To
+switch to the dark color scheme, run the following command. You may
+need to restart the front-end development server.
+
+```
+cp studio/src/components/DarkTheme.css studio/src/components/Theme.css
+```
