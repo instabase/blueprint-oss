@@ -1,53 +1,53 @@
 #studioRoot {
   --very-light-primary-color: #667e98;
-  --light-primary-color: #657e98;
-  --primary-color: #3b638e;
-  --dark-primary-color: #165292;
+  --light-primary-color: #5874d1;
+  --primary-color: #83b1e3;
+  --dark-primary-color: #6188b3;
 
   --muted-light-primary-color: #486789;
-  --muted-primary-color: #384e66;
+  --muted-primary-color: #aeb2b9;
 
-  --secondary-color: #413d65;
+  --secondary-color: #4b495e;
 
-  --default-color: #eeeeee;
-  --slightly-muted-color: #cccccc;
-  --muted-color: #7d7d7d;
-  --very-muted-color: #666666;
+  --default-color: #000000;
+  --slightly-muted-color: #525252;
+  --muted-color: #646464;
+  --very-muted-color: #b7b7b7;
 
-  --very-dark-canvas-color: #000000;
-  --dark-canvas-color: #111111;
-  --slightly-dark-canvas-color: #1f1f1f;
-  --canvas-color: #222222;
-  --slightly-light-canvas-color: #313131;
-  --light-canvas-color: #414141;
-  --very-light-canvas-color: #525252;
+  --very-dark-canvas-color: #CCCCCC;
+  --dark-canvas-color: #DDDDDD;
+  --slightly-dark-canvas-color: #EEEEEE;
+  --canvas-color: #FFFFFF;
+  --slightly-light-canvas-color: #EEEEEE;
+  --light-canvas-color: #DDDDDD;
+  --very-light-canvas-color: #CCCCCC;
 
-  --soft-success-5-canvas-color: #34b355;
+  --soft-success-5-canvas-color: #63af77;
   --soft-success-5-color: white;
-  --soft-success-4-canvas-color: #34b355;
+  --soft-success-4-canvas-color: #63af77;
   --soft-success-4-color: white;
-  --soft-success-3-canvas-color: #34b355;
+  --soft-success-3-canvas-color: #63af77;
   --soft-success-3-color: white;
-  --soft-success-2-canvas-color: #34b355;
+  --soft-success-2-canvas-color: #63af77;
   --soft-success-2-color: white;
-  --soft-success-1-canvas-color: #34b355;
+  --soft-success-1-canvas-color: #63af77;
   --soft-success-1-color: white;
-  --soft-success-0-canvas-color: #414141;
+  --soft-success-0-canvas-color: #cd686f;
   --soft-success-0-color: white;
   --soft-success-unknown-canvas-color: var(--slightly-light-canvas-color);
   --soft-success-unknown-color: var(--slightly-muted-color);
 
-  --hard-success-5-canvas-color: #34b355;
+  --hard-success-5-canvas-color: #63af77;
   --hard-success-5-color: white;
-  --hard-success-4-canvas-color: #34b355;
+  --hard-success-4-canvas-color: #63af77;
   --hard-success-4-color: white;
-  --hard-success-3-canvas-color: #6cca84;
+  --hard-success-3-canvas-color: #8daf78;
   --hard-success-3-color: white;
-  --hard-success-2-canvas-color: #e6c83b;
+  --hard-success-2-canvas-color: #d5c060;
   --hard-success-2-color: white;
-  --hard-success-1-canvas-color: #ce943c;
+  --hard-success-1-canvas-color: #c39a5c;
   --hard-success-1-color: white;
-  --hard-success-0-canvas-color: #ca3e47;
+  --hard-success-0-canvas-color: #cd686f;
   --hard-success-0-color: white;
   --hard-success-unknown-canvas-color: var(--slightly-light-canvas-color);
   --hard-success-unknown-color: var(--slightly-muted-color);
@@ -104,7 +104,7 @@
   --code-default-color: var(--default-color);
   --code-field-color: var(--default-color);
   --code-predicate-color: var(--light-primary-color);
-  --code-property-color: #f1d790;
+  --code-property-color: #a98912;
 
   --very-light-entity-view-opacity: 0.3;
   --light-entity-view-opacity: 0.35;

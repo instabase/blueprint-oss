@@ -133,10 +133,10 @@ extraction program `paystubs.py`). You will need to make a new model.
 ## Themes
 
 There are two color schemes available for Studio. Toggling between
-them must be done manually. The default is the light color scheme. To
+them must be done manually. The default is the dark color scheme. To
 switch to the dark color scheme, run the following command. You may
 need to restart the front-end development server.
 
 ```
-cp studio/src/components/DarkTheme.css studio/src/components/Theme.css
+cp studio/src/components/LightTheme.css studio/src/components/Theme.css
 ```
