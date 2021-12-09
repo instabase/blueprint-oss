@@ -134,7 +134,7 @@ extraction program `paystubs.py`). You will need to make a new model.
 
 There are two color schemes available for Studio. Toggling between
 them must be done manually. The default is the dark color scheme. To
-switch to the dark color scheme, run the following command. You may
+switch to the light color scheme, run the following command. You may
 need to restart the front-end development server.
 
 ```
