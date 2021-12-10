@@ -1,0 +1,123 @@
+#studioRoot {
+  --very-light-primary-color: #667e98;
+  --light-primary-color: #5874d1;
+  --primary-color: #83b1e3;
+  --dark-primary-color: #6188b3;
+
+  --muted-light-primary-color: #486789;
+  --muted-primary-color: #aeb2b9;
+
+  --secondary-color: #4b495e;
+
+  --default-color: #000000;
+  --slightly-muted-color: #525252;
+  --muted-color: #646464;
+  --very-muted-color: #b7b7b7;
+
+  --very-dark-canvas-color: #CCCCCC;
+  --dark-canvas-color: #DDDDDD;
+  --slightly-dark-canvas-color: #EEEEEE;
+  --canvas-color: #FFFFFF;
+  --slightly-light-canvas-color: #EEEEEE;
+  --light-canvas-color: #DDDDDD;
+  --very-light-canvas-color: #CCCCCC;
+
+  --soft-success-5-canvas-color: #63af77;
+  --soft-success-5-color: white;
+  --soft-success-4-canvas-color: #63af77;
+  --soft-success-4-color: white;
+  --soft-success-3-canvas-color: #63af77;
+  --soft-success-3-color: white;
+  --soft-success-2-canvas-color: #63af77;
+  --soft-success-2-color: white;
+  --soft-success-1-canvas-color: #63af77;
+  --soft-success-1-color: white;
+  --soft-success-0-canvas-color: #cd686f;
+  --soft-success-0-color: white;
+  --soft-success-unknown-canvas-color: var(--slightly-light-canvas-color);
+  --soft-success-unknown-color: var(--slightly-muted-color);
+
+  --hard-success-5-canvas-color: #63af77;
+  --hard-success-5-color: white;
+  --hard-success-4-canvas-color: #63af77;
+  --hard-success-4-color: white;
+  --hard-success-3-canvas-color: #8daf78;
+  --hard-success-3-color: white;
+  --hard-success-2-canvas-color: #d5c060;
+  --hard-success-2-color: white;
+  --hard-success-1-canvas-color: #c39a5c;
+  --hard-success-1-color: white;
+  --hard-success-0-canvas-color: #cd686f;
+  --hard-success-0-color: white;
+  --hard-success-unknown-canvas-color: var(--slightly-light-canvas-color);
+  --hard-success-unknown-color: var(--slightly-muted-color);
+
+  --checkbox-label-gap: var(--tiny-gutter);
+
+  --default-border-width: 1px;
+  --thick-border-width: 3px;
+
+  --default-border-color: var(--very-light-canvas-color);
+  --default-border: var(--default-border-width) solid
+    var(--default-border-color);
+
+  --dark-border-color: var(--dark-canvas-color);
+  --dark-border: var(--default-border-width) solid var(--dark-border-color);
+
+  --default-grid-line-width: var(--default-border-width);
+  --thick-grid-line-width: var(--thick-border-width);
+
+  --default-grid-line-color: var(--default-border-color);
+  --default-grid-line: var(--default-grid-line-width) solid
+    var(--default-grid-line-color);
+
+  --small-border-radius: 2px;
+  --medium-border-radius: 4px;
+  --large-border-radius: 6px;
+
+  --teeny-gutter: 1px;
+  --tiny-gutter: 2px;
+  --small-gutter: 4px;
+  --medium-gutter: 8px;
+  --large-gutter: 16px;
+  --huge-gutter: 24px;
+
+  --default-sans-serif-font-family: verdana, sans-serif;
+  --default-monospace-font-family: monaco, monospace;
+
+  --string-literal-font-family: helvetica, sans-serif;
+
+  --very-small-font-size: 10px;
+  --small-font-size: 12px;
+  --slightly-small-font-size: 14px;
+  --normal-font-size: 16px;
+  --large-font-size: 20px;
+
+  --default-code-font-family: var(--default-monospace-font-family);
+
+  --very-small-code-font-size: 9px;
+  --small-code-font-size: 10px;
+  --slightly-small-code-font-size: 11px;
+  --normal-code-font-size: 12px;
+  --large-code-font-size: 14px;
+
+  --code-default-color: var(--default-color);
+  --code-field-color: var(--default-color);
+  --code-predicate-color: var(--light-primary-color);
+  --code-property-color: #a98912;
+
+  --very-light-entity-view-opacity: 0.3;
+  --light-entity-view-opacity: 0.35;
+  --default-entity-view-opacity: 0.4;
+  --dark-entity-view-opacity: 0.45;
+  --very-dark-entity-view-opacity: 0.5;
+
+  --default-bbox-view-color: 255, 229, 124;
+  --target-value-view-color: 133, 72, 224;
+  --extracted-value-view-color: 64, 136, 230;
+
+  --default-bbox-view-outline-width: var(--default-border-width);
+
+  --selected-target-value-view-outline: var(--thick-grid-line-width) solid
+    rgba(var(--target-value-view-color), 1);
+}
