@@ -1,6 +1,38 @@
 # Blueprint
 
 Blueprint is a declarative extraction language for semi-structured documents.
+Users describe their documents using constraints, and Blueprint's engine solves
+the constraint systems to produce extractions.
+
+For example:
+
+```
+extract(
+  text_equals("Neil Patel")('patel_label'),
+  is_dollar_amount('patel_revenue'),
+  bottom_aligned('patel_label', 'patel_revenue'),
+  text_equals("Annual $")('annual_revenue_label'),
+  right_aligned('annual_revenue_label', 'patel_revenue'))
+
+    +
+```
+![sample document](./assets/sample_document.jpg)
+```
+= {
+  'patel_label': "Neil Patel",
+  'annual_revenue_label': "Annual $",
+  'patel_revenue': "$79,280"
+}
+```
+
+Blueprint can be used from the command line.
+
+We also provide Studio, an experimental, interactive GUI for labeling training
+data, automatically synthesizing Blueprint constraint systems from labeled
+data, tweaking synthesized Blueprint programs or building them from scratch
+interactively, running them against test data, and debugging.
+
+![Studio screenshot](./assets/studio_screenshot.png)
 
 # Setup
 
