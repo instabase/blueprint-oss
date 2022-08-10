@@ -130,6 +130,8 @@ project directory -- then you should be able to view sample paystubs in the GUI.
 Studio does not use Python-based Blueprint programs (for example, the reference
 extraction program `paystubs.py`). You will need to make a new model.
 
+[Instructions](vldb22.md) to reproduce experiments in VLDB'ss paper.
+
 ## Themes
 
 There are two color schemes available for Studio. Toggling between
